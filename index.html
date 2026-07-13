@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wajid Riaz - Philosophy Hub</title>
+    <style>
+        :root {
+            --bg-color: #f4f6f9;
+            --text-color: #1a1a1a;
+            --card-bg: #ffffff;
+            --border-color: #e0e0e0;
+            --accent-color: #2c3e50;
+            --btn-text: #ffffff;
+            --muted-text: #555555;
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #121212;
+            --text-color: #f5f5f5;
+            --card-bg: #1e1e1e;
+            --border-color: #333333;
+            --accent-color: #34495e;
+            --btn-text: #ffffff;
+            --muted-text: #b0b0b0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styling */
+        aside {
+            width: 280px;
+            background-color: var(--card-bg);
+            border-right: 1px solid var(--border-color);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: fixed;
+            height: 100vh;
+        }
+
+        .brand h2 {
+            color: var(--text-color);
+            margin-bottom: 5px;
+        }
+
+        .brand p {
+            color: var(--muted-text);
+            font-size: 0.85rem;
+        }
+
+        .nav-links {
+            list-style: none;
+            margin-top: 30px;
+        }
+
+        .nav-links li {
+            padding: 12px 15px;
+            margin-bottom: 8px;
+            background: var(--bg-color);
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+        .nav-links li:hover {
+            background-color: var(--border-color);
+        }
+
+        /* Main View Wrapper */
+        main {
+            margin-left: 280px;
+            padding: 40px;
+            width: calc(100% - 280px);
+        }
+
+        .section-panel {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 30px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+        }
+
+        h3 {
+            margin-bottom: 15px;
+            color: var(--text-color);
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 8px;
+        }
+
+        p, label {
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* Form Utilities & Controls */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-color);
+            color: var(--text-color);
+        }
+
+        .btn {
+            background-color: var(--accent-color);
+            color: var(--btn-text);
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .download-box {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        /* Modals and Overlays */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .modal-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 30px;
+            border-radius: 8px;
+            width: 400px;
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 10px; right: 15px;
+            cursor: pointer;
+            font-size: 20px;
+            color: var(--text-color);
+        }
+
+        /* Status Badges */
+        .auth-status-badge {
+            font-size: 0.85rem;
+            padding: 5px 10px;
+            background: var(--border-color);
+            border-radius: 4px;
+            display: inline-block;
+            margin-bottom: 15px;
+            color: var(--text-color);
+        }
+
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar Layout -->
+    <aside>
+        <div class="top-meta">
+            <div class="brand">
+                <h2>Wajid Riaz</h2>
+                <p>Philosophy & Archives</p>
+            </div>
+            <ul class="nav-links">
+                <li onclick="switchTab('intro')">Introduction</li>
+                <li onclick="switchTab('documents')">Documents Hub</li>
+                <li id="admin-nav-item" class="hidden" onclick="switchTab('admin-panel')">🔧 Admin Core</li>
+            </ul>
+        </div>
+        <div class="bottom-controls">
+            <div id="user-display-status" class="auth-status-badge">Logged out</div>
+            <div style="display:flex; flex-direction:column; gap:10px;">
+                <button class="btn" id="global-auth-btn" onclick="openAuthModal('login')">Sign In / Register</button>
+                <button class="btn" onclick="toggleThemeMode()">Toggle Night Mode</button>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content Arena -->
+    <main>
+        <!-- Intro Component (Default View) -->
+        <div id="section-intro" class="section-panel">
+            <h3>Introduction</h3>
+            <p>Welcome to the structured philosophical archive of Wajid Riaz. This ecosystem functions as a decentralized reading module preserving core dialectics, metaphysical commentaries, and research documentation. Visitors can navigate the textual indices, while verified accounts retain analytical access permissions to download localized primary documentation blocks.</p>
+        </div>
+
+        <!-- Document Hub Component -->
+        <div id="section-documents" class="section-panel hidden">
+            <h3>Documents & Library</h3>
+            <p>Select from the primary texts below. Downloading assets requires an active user signature context.</p>
+            <div class="download-box">
+                <button class="btn" onclick="triggerSecureDownload('Document_Core_Alpha.pdf')">Download PDF Essay</button>
+                <button class="btn" onclick="triggerSecureDownload('Metaphysics_Analysis.docx')">Download DOCX Copy</button>
+            </div>
+        </div>
+
+        <!-- Back-office Admin Console Matrix -->
+        <div id="section-admin-panel" class="section-panel hidden">
+            <h3>Administrative Master Hub</h3>
+            <p style="margin-bottom:15px;">Welcome back, Admin Wajid Riaz. Registered user configurations logged on this client context are rendered below:</p>
+            
+            <table style="width:100%; border-collapse:collapse; color:var(--text-color);">
+                <thead>
+                    <tr style="border-bottom:2px solid var(--border-color); text-align:left;">
+                        <th style="padding:10px;">User Email</th>
+                        <th style="padding:10px;">Password Cache</th>
+                    </tr>
+                </thead>
+                <tbody id="user-database-rows">
+                    <!-- Dynamic Rows Insertion -->
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <!-- Unified Identity Verification Gateway (Modal Framework) -->
+    <div id="auth-modal-overlay" class="modal-overlay">
+        <div class="modal-card">
+            <span class="close-modal" onclick="closeAuthModal()">&times;</span>
+            
+            <!-- Context 1: Login Box -->
+            <div id="sub-auth-login">
+                <h3 style="border:none;">Sign In Context</h3>
+                <div class="form-group">
+                    <label>Email / Username</label>
+                    <input type="text" id="login-id" placeholder="Enter registration email or admin ID">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="login-pass" placeholder="••••••••">
+                </div>
+                <button class="btn" onclick="executeLoginPhase()">Next Phase</button>
+                <p style="margin-top:15px; font-size:0.85rem;">
+                    Need an account? <span style="color:blue; cursor:pointer;" onclick="toggleAuthContext('signup')">Sign up here</span><br>
+                    Forgot authentication? <span style="color:blue; cursor:pointer;" onclick="toggleAuthContext('forgot')">Reset Password</span>
+                </p>
+            </div>
+
+            <!-- Context 2: Signup Box -->
+            <div id="sub-auth-signup" class="hidden">
+                <h3 style="border:none;">Create Viewer Account</h3>
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" id="signup-email" placeholder="name@domain.com">
+                </div>
+                <div class="form-group">
+                    <label>Create Password</label>
+                    <input type="password" id="signup-pass" placeholder="••••••••">
+                </div>
+                <button class="btn" onclick="executeSignupPhase()">Generate OTP Request</button>
+                <p style="margin-top:15px; font-size:0.85rem;">
+                    Existing system handle? <span style="color:blue; cursor:pointer;" onclick="toggleAuthContext('login')">Return to Login</span>
+                </p>
+            </div>
+
+            <!-- Context 3: OTP Interface -->
+            <div id="sub-auth-otp" class="hidden">
+                <h3 style="border:none;">Security Verification Required</h3>
+                <p style="font-size:0.85rem; margin-bottom:10px;" id="otp-hint-text">An input authorization token has been mapped to your destination device context.</p>
+                <div class="form-group">
+                    <label>Enter One-Time Password (OTP)</label>
+                    <input type="text" id="otp-input" placeholder="Enter 6-digit signature token">
+                </div>
+                <button class="btn" onclick="executeVerifyOTPPhase()">Verify Identity Check</button>
+            </div>
+
+            <!-- Context 4: Forget Framework -->
+            <div id="sub-auth-forgot" class="hidden">
+                <h3 style="border:none;">Password Restoration Request</h3>
+                <div class="form-group">
+                    <label>Registered Account Email</label>
+                    <input type="email" id="forgot-email" placeholder="name@domain.com">
+                </div>
+                <button class="btn" onclick="executeForgotPasswordPhase()">Send Recovery Token</button>
+                <p style="margin-top:15px; font-size:0.85rem;">
+                    Remember parameters? <span style="color:blue; cursor:pointer;" onclick="toggleAuthContext('login')">Back to login</span>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Core Identity State Matrix
+        let sessionUser = null;
+        let isAdminActive = false;
+        let volatileOTPCode = null;
+        let transientPendingUser = null;
+        let forgotWorkflowActive = false;
+
+        // Initialize Global User Base Cache Emulator
+        if(!localStorage.getItem('viewer_db')) {
+            localStorage.setItem('viewer_db', JSON.stringify([]));
+        }
+
+        function toggleThemeMode() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const targetTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', targetTheme);
+        }
+
+        function switchTab(targetSection) {
+            ['intro', 'documents', 'admin-panel'].forEach(sec => {
+                document.getElementById(`section-${sec}`).classList.add('hidden');
+            });
+            document.getElementById(`section-${targetSection}`).classList.remove('hidden');
+        }
+
+        function openAuthModal(mode) {
+            document.getElementById('auth-modal-overlay').classList.add('active');
+            toggleAuthContext(mode);
+        }
+
+        function closeAuthModal() {
+            document.getElementById('auth-modal-overlay').classList.remove('active');
+            // Flush verification buffers
+            volatileOTPCode = null;
+            transientPendingUser = null;
+            forgotWorkflowActive = false;
+        }
+
+        function toggleAuthContext(mode) {
+            ['login', 'signup', 'otp', 'forgot'].forEach(view => {
+                document.getElementById(`sub-auth-${view}`).classList.add('hidden');
+            });
+            document.getElementById(`sub-auth-${mode}`).classList.remove('hidden');
+        }
+
+        function executeLoginPhase() {
+            const userHandle = document.getElementById('login-id').value.trim();
+            const passHandle = document.getElementById('login-pass').value;
+
+            if(userHandle === 'wajidriazadmin' && passHandle === '895269456780#Wa') {
+                // Admin Execution Bypass
+                isAdminActive = true;
+                sessionUser = "Admin: Wajid Riaz";
+                document.getElementById('user-display-status').innerText = "Admin: Wajid Riaz";
+                document.getElementById('admin-nav-item').classList.remove('hidden');
+                document.getElementById('global-auth-btn').innerText = "Sign Out";
+                document.getElementById('global-auth-btn').setAttribute('onclick', 'executeSignout()');
+                renderAdminUserLogs();
+                closeAuthModal();
+                alert("Identity Authenticated. Administrative override enabled.");
+                return;
+            }
+
+            // Client-level Verification Route
+            const userDb = JSON.parse(localStorage.getItem('viewer_db'));
+            const matchingUser = userDb.find(u => u.email === userHandle && u.password === passHandle);
+
+            if(matchingUser) {
+                // Generate validation matrix
+                transientPendingUser = matchingUser;
+                volatileOTPCode = Math.floor(100000 + Math.random() * 900000).toString();
+                
+                // Simulate secure delivery response trace
+                alert(`[SECURE SIMULATION TO: ${matchingUser.email}]\nYour One-Time Password Token is: ${volatileOTPCode}`);
+                
+                document.getElementById('otp-hint-text').innerText = `An authorization token has been mapped to ${matchingUser.email}.`;
+                toggleAuthContext('otp');
+            } else {
+                alert("Invalid verification signatures matching current system records.");
+            }
+        }
+
+        function executeSignupPhase() {
+            const emailInput = document.getElementById('signup-email').value.trim();
+            const passInput = document.getElementById('signup-pass').value;
+
+            if(!emailInput || passInput.length < 4) {
+                alert("Please declare a valid email matrix and a complete password signature.");
+                return;
+            }
+
+            const userDb = JSON.parse(localStorage.getItem('viewer_db'));
+            if(userDb.some(u => u.email === emailInput)) {
+                alert("Email identity register matches active accounts.");
+                return;
+            }
+
+            // Map variables to validation buffer
+            transientPendingUser = { email: emailInput, password: passInput };
+            volatileOTPCode = Math.floor(100000 + Math.random() * 900000).toString();
+
+            alert(`[SECURE SIMULATION TO: ${emailInput}]\nYour Account Registration OTP Code is: ${volatileOTPCode}`);
+            document.getElementById('otp-hint-text').innerText = `Verification credentials mapped to ${emailInput}.`;
+            toggleAuthContext('otp');
+        }
+
+        function executeVerifyOTPPhase() {
+            const typedOTP = document.getElementById('otp-input').value.trim();
+
+            if(typedOTP === volatileOTPCode && transientPendingUser) {
+                if(forgotWorkflowActive) {
+                    // Password recovery branch verification matching
+                    alert(`Verification Confirmed. Account clearance granted. Your stored password entry is: [ ${transientPendingUser.password} ]`);
+                    closeAuthModal();
+                    return;
+                }
+
+                const userDb = JSON.parse(localStorage.getItem('viewer_db'));
+                // Append instance only if not already initialized in local db arrays
+                if(!userDb.some(u => u.email === transientPendingUser.email)) {
+                    userDb.push(transientPendingUser);
+                    localStorage.setItem('viewer_db', JSON.stringify(userDb));
+                }
+
+                sessionUser = transientPendingUser.email;
+                document.getElementById('user-display-status').innerText = `User: ${sessionUser}`;
+                document.getElementById('global-auth-btn').innerText = "Sign Out";
+                document.getElementById('global-auth-btn').setAttribute('onclick', 'executeSignout()');
+                
+                closeAuthModal();
+                alert("User validation sequence completed successfully.");
+            } else {
+                alert("OTP structure does not match active authorization profile token.");
+            }
+        }
+
+        function executeForgotPasswordPhase() {
+            const targetEmail = document.getElementById('forgot-email').value.trim();
+            const userDb = JSON.parse(localStorage.getItem('viewer_db'));
+            const matchingUser = userDb.find(u => u.email === targetEmail);
+
+            if(matchingUser) {
+                forgotWorkflowActive = true;
+                transientPendingUser = matchingUser;
+                volatileOTPCode = Math.floor(100000 + Math.random() * 900000).toString();
+                
+                alert(`[SECURE SIMULATION TO: ${targetEmail}]\nYour Password Recovery OTP Verification Code is: ${volatileOTPCode}`);
+                document.getElementById('otp-hint-text').innerText = `Account recovery tracking token pushed to ${targetEmail}.`;
+                toggleAuthContext('otp');
+            } else {
+                alert("No structural record for that email identifier exists.");
+            }
+        }
+
+        function triggerSecureDownload(assetTitle) {
+            if(sessionUser || isAdminActive) {
+                alert(`Initialising direct stream download for asset metadata profile: ${assetTitle}`);
+                // Insert window.open or active resource locator endpoints here if needed
+            } else {
+                alert("Access Signature Forbidden: Please log in or verify a viewer account framework to fetch documentation assets.");
+                openAuthModal('login');
+            }
+        }
+
+        function renderAdminUserLogs() {
+            const userDb = JSON.parse(localStorage.getItem('viewer_db'));
+            const container = document.getElementById('user-database-rows');
+            container.innerHTML = '';
+
+            if(userDb.length === 0) {
+                container.innerHTML = `<tr><td colspan="2" style="padding:10px; color:var(--muted-text); text-align:center;">No viewer data frames captured yet on this node.</td></tr>`;
+                return;
+            }
+
+            userDb.forEach(user => {
+                const layoutRow = document.createElement('tr');
+                layoutRow.style.borderBottom = "1px solid var(--border-color)";
+                layoutRow.innerHTML = `
+                    <td style="padding:10px; font-family:monospace;">${user.email}</td>
+                    <td style="padding:10px; font-family:monospace;">${user.password}</td>
+                `;
+                container.appendChild(layoutRow);
+            });
+        }
+
+        function executeSignout() {
+            sessionUser = null;
+            isAdminActive = false;
+            document.getElementById('user-display-status').innerText = "Logged out";
+            document.getElementById('admin-nav-item').add('hidden');
+            document.getElementById('global-auth-btn').innerText = "Sign In / Register";
+            document.getElementById('global-auth-btn').setAttribute('onclick', "openAuthModal('login')");
+            switchTab('intro');
+            alert("Context execution parameters flushed. System locked.");
+        }
+    </script>
+</body>
+</html>
