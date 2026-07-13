@@ -45,14 +45,48 @@
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-        body { background-color: var(--bg-main); color: var(--text-main); display: flex; min-height: 100vh; }
+        body { background-color: var(--bg-main); color: var(--text-main); display: flex; min-height: 100vh; overflow-x: hidden; }
 
-        /* Sidebar Design */
+        /* Sidebar Design - Modified to stay hidden on BOTH laptop and phone until triggered */
         aside {
-            width: 260px; background-color: var(--bg-sidebar); border-right: 1px solid var(--border-color);
-            padding: 24px; display: flex; flex-direction: column; justify-content: space-between; position: fixed; height: 100vh; z-index: 10;
+            width: 260px; 
+            background-color: var(--bg-sidebar); 
+            border-right: 1px solid var(--border-color);
+            padding: 24px; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: space-between; 
+            position: fixed; 
+            height: 100vh; 
+            z-index: 100;
+            left: -265px; /* Hidden off-screen by default on ALL screen widths */
+            transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
+        
+        /* Visible sidebar class triggered by the book icon */
+        aside.active {
+            left: 0;
+            box-shadow: 4px 0 25px rgba(0,0,0,0.15);
+        }
+
         .brand-title { display: flex; align-items: center; gap: 10px; color: var(--accent-primary); font-weight: 700; font-size: 1.2rem; margin-bottom: 40px; }
+        
+        /* Dedicated Toggle Book Icon Style */
+        .sidebar-toggle-btn {
+            cursor: pointer;
+            font-size: 1.3rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4px;
+            border-radius: 4px;
+            transition: background 0.2s;
+            user-select: none;
+        }
+        .sidebar-toggle-btn:hover {
+            background: var(--border-color);
+        }
+
         .nav-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
         .nav-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border-radius: 8px; cursor: pointer; color: var(--text-main); font-weight: 500; transition: 0.2s; }
         .nav-item:hover, .nav-item.active { background-color: var(--bg-main); color: var(--accent-primary); }
@@ -67,7 +101,7 @@
         .profile-details p { font-size: 0.7rem; color: var(--text-muted); font-weight: bold; text-transform: uppercase; letter-spacing: 0.02em; }
         .auth-trigger-link { font-size: 0.75rem; color: var(--accent-primary); text-decoration: underline; cursor: pointer; border: none; background: none; font-weight: 600; margin-top: -10px; margin-bottom: 15px; display: inline-block; }
 
-        /* Beautiful Permanent Intro Card Modal Tooltip */
+        /* Permanent Intro Card Modal Tooltip */
         .intro-popover { position: absolute; bottom: 110px; left: 0; width: 100%; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; padding: 18px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); display: none; z-index: 50; }
         .intro-popover.active { display: block; }
         .intro-popover h4 { font-family: Georgia, serif; margin-bottom: 8px; font-size: 1.1rem; color: var(--accent-primary); }
@@ -79,10 +113,29 @@
         .theme-btn { padding: 6px; border: 1px solid var(--border-color); background: var(--bg-card); color: var(--text-main); border-radius: 4px; font-size: 0.75rem; cursor: pointer; font-weight: 500; }
         .theme-btn.active { border-color: var(--accent-primary); background: var(--accent-primary); color: var(--btn-text); }
 
-        /* Workspace Space */
-        main { margin-left: 260px; padding: 40px; width: calc(100% - 260px); }
+        /* Workspace Space - Standardized layout structure padding */
+        main { 
+            margin-left: 0; 
+            padding: 40px; 
+            width: 100%; 
+            transition: margin-left 0.3s ease-in-out;
+        }
+        
+        /* Shifting layout space dynamically on large viewports when active */
+        body.sidebar-open main {
+            margin-left: 260px;
+            width: calc(100% - 260px);
+        }
+        
+        @media (max-width: 768px) {
+            body.sidebar-open main {
+                margin-left: 0;
+                width: 100%;
+            }
+        }
+
         .top-navbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 40px; gap: 20px; }
-        .search-bar { position: relative; flex-grow: 1; max-width: 500px; }
+        .search-bar { position: relative; flex-grow: 1; max-width: 500px; display: flex; align-items: center; gap: 15px; }
         .search-bar input { width: 100%; padding: 10px 16px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-card); color: var(--text-main); }
         .navbar-actions { display: flex; gap: 12px; }
 
@@ -129,7 +182,7 @@
         .comment-form input { flex-grow: 1; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-card); color: var(--text-main); font-size: 0.85rem; }
 
         /* Modals */
-        .modal-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(15,23,42,0.4); backdrop-filter: blur(4px); display:flex; align-items:center; justify-content:center; z-index:100; visibility:hidden; opacity:0; transition: 0.2s ease; }
+        .modal-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(15,23,42,0.4); backdrop-filter: blur(4px); display:flex; align-items:center; justify-content:center; z-index:500; visibility:hidden; opacity:0; transition: 0.2s ease; }
         .modal-overlay.active { visibility:visible; opacity:1; }
         .modal-container { background: var(--bg-card); border: 1px solid var(--border-color); width: 480px; border-radius: 16px; padding: 28px; position: relative; }
         .modal-close { position: absolute; top: 20px; right: 20px; font-size: 1.5rem; cursor: pointer; color: var(--text-muted); }
@@ -149,7 +202,7 @@
 </head>
 <body>
 
-    <aside>
+    <aside id="app-sidebar-node">
         <div>
             <div class="brand-title">
                 <span>📝 Wajid's Notebook</span>
@@ -200,6 +253,7 @@
     <main>
         <div class="top-navbar">
             <div class="search-bar">
+                <div class="sidebar-toggle-btn" id="sidebar-master-toggle-trigger">📖</div>
                 <input type="text" placeholder="Search catalog by keyword title or body structure...">
             </div>
             <div class="navbar-actions">
@@ -339,14 +393,15 @@
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc, getDocs, collection, addDoc, query, orderBy, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // FIXED: Declared as standard clean string literal format directly to avoid decoding errors
+        // Verified Configuration block
         const firebaseConfig = {
             apiKey: "AIzaSyC326Wf1ij1c_pja2MRVEA_6Eg-pppJb5I",
             authDomain: "wajid-philodophy.firebaseapp.com",
             projectId: "wajid-philodophy",
             storageBucket: "wajid-philodophy.firebasestorage.app",
             messagingSenderId: "16835513128",
-            appId: "1:16835513128:web:97989ee0844a41f59c1e1d"
+            appId: "1:16835513128:web:97989ee0844a41f59c1e1d",
+            measurementId: "G-VXMK8P2EMK"
         };
 
         const app = initializeApp(firebaseConfig);
@@ -469,8 +524,8 @@
                         ${insideUI}
                         <div class="entry-actions">
                             <div class="share-row">
-                                <button class="share-icon-btn" onclick="sharePlatformHub('whatsapp')">WhatsApp</button>
-                                <button class="share-icon-btn" onclick="sharePlatformHub('x')">X Portal</button>
+                                <button class="share-icon-btn">WhatsApp</button>
+                                <button class="share-icon-btn">X Portal</button>
                             </div>
                         </div>
                         <div class="comment-box-root">
@@ -594,6 +649,29 @@
     </script>
 
     <script>
+        // STRICT MENU VISIBILITY CONTROLLER FOR LAPTOP AND MOBILE
+        document.addEventListener("DOMContentLoaded", () => {
+            const triggerBtn = document.getElementById('sidebar-master-toggle-trigger');
+            const sidebarNode = document.getElementById('app-sidebar-node');
+
+            if (triggerBtn && sidebarNode) {
+                // Clicking the 📖 Icon opens/closes the sidebar exclusively
+                triggerBtn.addEventListener('click', (event) => {
+                    event.stopPropagation();
+                    sidebarNode.classList.toggle('active');
+                    document.body.classList.toggle('sidebar-open');
+                });
+
+                // Clicking anywhere outside the sidebar menu automatically dismisses it
+                document.addEventListener('click', (event) => {
+                    if (!sidebarNode.contains(event.target) && event.target !== triggerBtn) {
+                        sidebarNode.classList.remove('active');
+                        document.body.classList.remove('sidebar-open');
+                    }
+                });
+            }
+        });
+
         function setAppTheme(themeName) {
             document.documentElement.setAttribute('data-theme', themeName);
             ['light', 'charcoal', 'night'].forEach(t => {
@@ -610,6 +688,10 @@
             });
             document.getElementById(`view-${targetTab}`).classList.remove('hidden');
             document.getElementById(`tab-${targetTab}`).classList.add('active');
+            
+            // Auto close menu context drawer on selection if view shifts on mobile views
+            document.getElementById('app-sidebar-node').classList.remove('active');
+            document.body.classList.remove('sidebar-open');
         }
 
         function toggleIdentityPopover(event) {
@@ -627,8 +709,8 @@
         function closeAuthModal() { document.getElementById('modal-auth').classList.remove('active'); }
 
         function sharePlatformHub(platform) {
-            const address = window.location.href;
-            if (platform === 'copy') { navigator.clipboard.writeText(address); alert("Copied address link!"); }
+            const address = window.location.href.split('?')[0];
+            if (platform === 'copy') { navigator.clipboard.writeText(address); alert("Copied hub repository address link!"); }
         }
     </script>
 </body>
