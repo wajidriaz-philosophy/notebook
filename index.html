@@ -149,7 +149,6 @@
 </head>
 <body>
 
-    <!-- Sidebar Module -->
     <aside>
         <div>
             <div class="brand-title">
@@ -170,7 +169,6 @@
         </div>
 
         <div class="sidebar-footer">
-            <!-- Beautiful identity introduction popover toggle box -->
             <div class="intro-popover" id="identity-popover-card">
                 <h4>Wajid Riaz</h4>
                 <p>An undergraduate Physics student at <strong>Bahauddin Zakariya University Multan</strong>, originally hailing from <strong>Dera Ghazi Khan, Pakistan</strong>.</p>
@@ -178,7 +176,6 @@
                 <div class="meta-line">Physicist & Philosopher</div>
             </div>
 
-            <!-- Profile Container displaying custom titles -->
             <div class="profile-container" onclick="toggleIdentityPopover(event)">
                 <div class="profile-info">
                     <div class="avatar">WR</div>
@@ -189,7 +186,6 @@
                 </div>
             </div>
             
-            <!-- Login/Signup option located right next to profile wrapper -->
             <button class="auth-trigger-link" id="auth-action-trigger" onclick="openAuthModal()">Sign In / Create Account</button>
 
             <div class="theme-selector-label">Visual Environment Layout</div>
@@ -201,7 +197,6 @@
         </div>
     </aside>
 
-    <!-- Main Window Space -->
     <main>
         <div class="top-navbar">
             <div class="search-bar">
@@ -213,16 +208,13 @@
             </div>
         </div>
 
-        <!-- Home Dashboard Segment -->
         <div id="view-home">
             <div class="hub-header">
                 <h1>Philosophical Thought Hub</h1>
                 <p>Essays on existence, systemic evolutionist frameworks, and computational physics parameters.</p>
             </div>
 
-            <!-- Stats grid is wrapped in hidden container class by default (Admin Only) -->
             <div class="stats-container hidden" id="admin-only-stats-wrapper">
-                <!-- Metrics Card -->
                 <div class="stats-card">
                     <div class="card-title">📈 Live Workflow Stats (Admin Only)</div>
                     <div class="metrics-subgrid">
@@ -240,7 +232,6 @@
                         </div>
                     </div>
                 </div>
-                <!-- Status Card -->
                 <div class="stats-card">
                     <div class="card-title">⚙️ System Core Status</div>
                     <div class="status-badge">
@@ -255,13 +246,11 @@
             </div>
         </div>
 
-        <!-- Essays & Library Tab Segment -->
         <div id="view-library" class="hidden">
             <h3 class="section-title">Complete Extended Archive Index</h3>
             <div class="feed-container" id="extended-library-hook"></div>
         </div>
 
-        <!-- Master Administration User Log Tab Segment -->
         <div id="view-admin" class="hidden">
             <h3 class="section-title">Verified Registered Viewer System Entries</h3>
             <table style="width:100%; border-collapse:collapse; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px;">
@@ -276,7 +265,6 @@
         </div>
     </main>
 
-    <!-- Publish Asset Modal -->
     <div class="modal-overlay" id="modal-publish">
         <div class="modal-container">
             <span class="modal-close" onclick="closePublishModal()">&times;</span>
@@ -319,7 +307,6 @@
         </div>
     </div>
 
-    <!-- Authentication Modal -->
     <div class="modal-overlay" id="modal-auth">
         <div class="modal-container" style="width: 380px;">
             <span class="modal-close" onclick="closeAuthModal()">&times;</span>
@@ -347,15 +334,14 @@
         </div>
     </div>
 
-    <!-- Corrected Firebase Real-Time Engine Integration -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc, getDocs, collection, addDoc, query, orderBy, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // CONFIGURATION FIXED: Keys initialized securely via browser runtime standard parameters
+        // FIXED: Declared as standard clean string literal format directly to avoid decoding errors
         const firebaseConfig = {
-            apiKey: window.atob("QUl6YVN5QzMyNldmMWlqMWNfcGphMk1SVkVBXzZFZy1wcHJKYjVJ"),
+            apiKey: "AIzaSyC326Wf1ij1c_pja2MRVEA_6Eg-pppJb5I",
             authDomain: "wajid-philodophy.firebaseapp.com",
             projectId: "wajid-philodophy",
             storageBucket: "wajid-philodophy.firebasestorage.app",
@@ -607,7 +593,6 @@
         }
     </script>
 
-    <!-- UI Interaction Helper Scripts -->
     <script>
         function setAppTheme(themeName) {
             document.documentElement.setAttribute('data-theme', themeName);
