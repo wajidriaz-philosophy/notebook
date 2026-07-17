@@ -131,7 +131,7 @@
             .hub-header h1 { font-size: 1.6rem; }
             .stats-container { grid-template-columns: 1fr; gap: 15px; }
             .metrics-subgrid { grid-template-columns: 1fr; gap: 10px; }
-            .modal-container { width: 92% !important; padding: 20px; }
+            .modal-container { width: 92% !important; max-height: 85vh; padding: 20px; }
             .modal-tabs { grid-template-columns: 1fr; gap: 8px; }
             .entry-card { padding: 18px; }
             .share-row { flex-wrap: wrap; }
@@ -182,7 +182,7 @@
 
         .modal-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(15,23,42,0.4); backdrop-filter: blur(4px); display:flex; align-items:center; justify-content:center; z-index:500; visibility:hidden; opacity:0; transition: 0.2s ease; }
         .modal-overlay.active { visibility:visible; opacity:1; }
-        .modal-container { background: var(--bg-card); border: 1px solid var(--border-color); width: 480px; border-radius: 16px; padding: 28px; position: relative; }
+        .modal-container { background: var(--bg-card); border: 1px solid var(--border-color); width: 480px; max-height: 88vh; overflow-y: auto; border-radius: 16px; padding: 28px; position: relative; }
         .modal-close { position: absolute; top: 20px; right: 20px; font-size: 1.5rem; cursor: pointer; color: var(--text-muted); }
         .modal-container h3 { font-size: 1.25rem; font-family: Georgia, serif; margin-bottom: 20px; }
         
@@ -210,9 +210,14 @@
         .rich-editor-body:focus { outline: none; }
         .rich-editor-body:empty:before { content: attr(data-placeholder); color: var(--text-muted); }
         .rich-editor-body img, .rich-editor-body video { max-width: 100%; border-radius: 6px; margin: 8px 0; display: block; }
+        .embedded-media-wrapper { position: relative; display: inline-block; max-width: 100%; margin: 8px 0; }
+        .embedded-media-wrapper img, .embedded-media-wrapper video { max-width: 100%; border-radius: 6px; display: block; margin: 0; }
+        .embedded-media-remove-btn { position: absolute; top: 6px; right: 6px; width: 26px; height: 26px; border-radius: 50%; border: none; background: rgba(15,23,42,0.75); color: #fff; font-size: 14px; font-weight: bold; cursor: pointer; line-height: 1; display: flex; align-items: center; justify-content: center; }
+        .embedded-media-remove-btn:hover { background: #dc2626; }
 
         .rendered-essay-body img, .rendered-essay-body video { max-width: 100%; border-radius: 6px; margin: 10px 0; display: block; }
         .rendered-essay-body { color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; margin-bottom: 15px; }
+        .rendered-essay-body .embedded-media-remove-btn { display: none; }
 
         .category-badge { display: inline-block; padding: 3px 10px; background: var(--accent-primary); color: var(--btn-text); border-radius: 20px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; margin-left: 8px; }
         .category-filter-bar { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
@@ -506,8 +511,8 @@
         // handled by Cloudinary instead (free tier, no billing card needed). See the two
         // constants below — fill these in with your own Cloudinary values (instructions
         // are in the chat message that came with this file).
-        const CLOUDINARY_CLOUD_NAME = "vwcfgbh9";
-        const CLOUDINARY_UPLOAD_PRESET = "notebook_unsigned";
+        const CLOUDINARY_CLOUD_NAME = "YOUR_CLOUD_NAME";       // e.g. "dabc123xy"
+        const CLOUDINARY_UPLOAD_PRESET = "YOUR_UPLOAD_PRESET"; // e.g. "notebook_unsigned"
 
         // Corrected Firebase Config (Fixed the '1' vs 'l' typo in apiKey)
         const firebaseConfig = {
@@ -608,6 +613,12 @@
             document.getElementById('pub-category-other').classList.toggle('hidden', e.target.value !== 'Other');
         });
 
+        // Lets the user tap the × on an inserted image/video to remove it (works reliably on mobile).
+        window.removeEmbeddedMedia = function(btnEl) {
+            const wrapper = btnEl.closest('.embedded-media-wrapper');
+            if(wrapper) wrapper.remove();
+        };
+
         // --- Rich text formatting toolbar (Bold / Underline / Italic / Font / Size) ---
         window.applyFormat = function(command, value = null) {
             document.getElementById('pub-content').focus();
@@ -623,9 +634,13 @@
             statusEl.innerText = `Uploading ${mediaKind}... please wait.`;
             try {
                 const { url } = await uploadToCloudinary(file, mediaKind === 'image' ? 'image' : 'video');
-                const embedHTML = mediaKind === 'image'
+                const innerTag = mediaKind === 'image'
                     ? `<img src="${url}" alt="${file.name}">`
                     : `<video src="${url}" controls></video>`;
+                // contenteditable="false" makes this whole block an "atomic" island: it can be
+                // tapped/selected and deleted as one unit, which is much more reliable on mobile
+                // than trying to select an inline image/video inside editable text.
+                const embedHTML = `<span class="embedded-media-wrapper" contenteditable="false">${innerTag}<button type="button" class="embedded-media-remove-btn" onclick="removeEmbeddedMedia(this)" title="Remove ${mediaKind}">&times;</button></span>&nbsp;`;
                 document.getElementById('pub-content').focus();
                 document.execCommand('insertHTML', false, embedHTML);
                 statusEl.innerText = `${mediaKind === 'image' ? 'Image' : 'Video'} inserted successfully.`;
