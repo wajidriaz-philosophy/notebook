@@ -502,7 +502,12 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc, getDocs, collection, addDoc, query, orderBy, updateDoc, deleteDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-        import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
+        // Firebase Storage requires a paid (Blaze) plan, so file/image/video uploads are
+        // handled by Cloudinary instead (free tier, no billing card needed). See the two
+        // constants below — fill these in with your own Cloudinary values (instructions
+        // are in the chat message that came with this file).
+        const CLOUDINARY_CLOUD_NAME = "YOUR_CLOUD_NAME";       // e.g. "dabc123xy"
+        const CLOUDINARY_UPLOAD_PRESET = "YOUR_UPLOAD_PRESET"; // e.g. "notebook_unsigned"
 
         // Corrected Firebase Config (Fixed the '1' vs 'l' typo in apiKey)
         const firebaseConfig = {
@@ -518,7 +523,23 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        const storage = getStorage(app);
+
+        // Uploads any file (image, video, pdf, docx...) to Cloudinary's free tier and
+        // returns the public URL Cloudinary gives back. `resourceType` should be
+        // "image", "video", or "raw" (raw = pdf/docx/any non-media file).
+        async function uploadToCloudinary(file, resourceType = "auto") {
+            const formData = new FormData();
+            formData.append("file", file);
+            formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
+
+            const endpoint = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/${resourceType}/upload`;
+            const response = await fetch(endpoint, { method: "POST", body: formData });
+            const result = await response.json();
+            if(!response.ok) {
+                throw new Error(result.error?.message || "Cloudinary upload failed. Check your cloud name & upload preset.");
+            }
+            return { url: result.secure_url, publicId: result.public_id };
+        }
 
         let activeAuthMode = 'login';
         let activeContactMode = 'email'; // 'email' or 'phone'
@@ -531,7 +552,7 @@
         let pendingUploadedFileMeta = null; // { url, name } for attachment currently staged in publish modal
 
         // Expose db/storage refs used across window-scoped functions below
-        window.__notebookRefs = { db, storage, auth };
+        window.__notebookRefs = { db, auth };
 
         async function incrementGlobalPageView() {
             const metricsRef = doc(db, "analytics", "global_metrics");
@@ -593,7 +614,7 @@
             document.execCommand(command, false, value);
         };
 
-        // --- Insert an uploaded image or video inline into the essay editor ---
+        // --- Insert an uploaded image or video inline into the essay editor (via Cloudinary) ---
         window.insertMediaIntoEditor = async function(inputEl, mediaKind) {
             const file = inputEl.files[0];
             if(!file) return;
@@ -601,10 +622,7 @@
             statusEl.classList.remove('hidden');
             statusEl.innerText = `Uploading ${mediaKind}... please wait.`;
             try {
-                const storagePath = `notebook_media/${Date.now()}_${file.name}`;
-                const storageRef = ref(storage, storagePath);
-                await uploadBytes(storageRef, file);
-                const url = await getDownloadURL(storageRef);
+                const { url } = await uploadToCloudinary(file, mediaKind === 'image' ? 'image' : 'video');
                 const embedHTML = mediaKind === 'image'
                     ? `<img src="${url}" alt="${file.name}">`
                     : `<video src="${url}" controls></video>`;
@@ -618,7 +636,7 @@
             inputEl.value = '';
         };
 
-        // --- Upload a real PDF / DOCX / image attachment to Firebase Storage ---
+        // --- Upload a real PDF / DOCX / image attachment to Cloudinary ---
         window.handleAttachmentUpload = async function(inputEl) {
             const file = inputEl.files[0];
             if(!file) return;
@@ -626,13 +644,15 @@
             statusEl.classList.remove('hidden');
             statusEl.innerText = `Uploading ${file.name}...`;
             try {
-                const storagePath = `notebook_attachments/${Date.now()}_${file.name}`;
-                const storageRef = ref(storage, storagePath);
-                await uploadBytes(storageRef, file);
-                const url = await getDownloadURL(storageRef);
+                // Cloudinary needs to know the resource type: images use "image",
+                // PDFs are also served as "image" (Cloudinary renders/downloads them fine),
+                // and DOCX/other non-media files need "raw".
+                const chosenType = document.getElementById('pub-file-type').value; // pdf | docx | image
+                const resourceType = chosenType === 'docx' ? 'raw' : 'image';
+                const { url } = await uploadToCloudinary(file, resourceType);
                 document.getElementById('pub-file-path').value = url;
                 document.getElementById('pub-file-name').value = file.name;
-                pendingUploadedFileMeta = { url, name: file.name, storagePath };
+                pendingUploadedFileMeta = { url, name: file.name };
                 statusEl.innerText = `Uploaded: ${file.name}`;
             } catch(e) {
                 statusEl.innerText = "Upload failed: " + e.message;
