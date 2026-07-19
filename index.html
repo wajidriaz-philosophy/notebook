@@ -218,6 +218,10 @@
         .rendered-essay-body img, .rendered-essay-body video { max-width: 100%; border-radius: 6px; margin: 10px 0; display: block; }
         .rendered-essay-body { color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; margin-bottom: 15px; }
         .rendered-essay-body .embedded-media-remove-btn { display: none; }
+        .rendered-essay-body.collapsed { max-height: 4.6em; overflow: hidden; position: relative; }
+        .rendered-essay-body.collapsed::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2.2em; background: linear-gradient(to bottom, transparent, var(--bg-card)); }
+        .read-more-toggle-btn { background: none; border: none; color: var(--accent-primary); font-weight: 600; font-size: 0.85rem; cursor: pointer; padding: 4px 0 12px 0; }
+        .read-more-toggle-btn:hover { text-decoration: underline; }
 
         .category-badge { display: inline-block; padding: 3px 10px; background: var(--accent-primary); color: var(--btn-text); border-radius: 20px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; margin-left: 8px; }
         .category-filter-bar { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
@@ -352,16 +356,20 @@
         </div>
 
         <div id="view-admin" class="hidden">
-            <h3 class="section-title">Verified Registered Viewer System Entries</h3>
+            <h3 class="section-title">👥 Registered User Logs</h3>
             <table style="width:100%; border-collapse:collapse; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px;">
                 <thead>
                     <tr style="background: var(--bg-main); text-align: left; border-bottom: 2px solid var(--border-color);">
-                        <th style="padding: 12px;">Registered User Email</th>
-                        <th style="padding: 12px;">Database Node Reference</th>
+                        <th style="padding: 12px;">Full Name</th>
+                        <th style="padding: 12px;">Username</th>
+                        <th style="padding: 12px;">Contact Type</th>
+                        <th style="padding: 12px;">Contact Value</th>
+                        <th style="padding: 12px;">Joined</th>
                     </tr>
                 </thead>
                 <tbody id="admin-user-rows"></tbody>
             </table>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 12px;">Total registered users: <strong id="user-count-total">0</strong></p>
         </div>
     </main>
 
@@ -399,12 +407,13 @@
                     <button type="button" onclick="applyFormat('bold')" title="Bold"><b>B</b></button>
                     <button type="button" onclick="applyFormat('underline')" title="Underline"><u>U</u></button>
                     <button type="button" onclick="applyFormat('italic')" title="Italic"><i>I</i></button>
-                    <select onchange="applyFormat('fontName', this.value)" title="Font family">
-                        <option value="">Font</option>
+                    <select onchange="changeFontFamily(this)" title="Font family">
+                        <option value="">Font Family</option>
                         <option value="Georgia, serif">Georgia</option>
                         <option value="Arial, sans-serif">Arial</option>
                         <option value="'Courier New', monospace">Courier New</option>
                         <option value="'Times New Roman', serif">Times New Roman</option>
+                        <option value="Verdana, sans-serif">Verdana</option>
                     </select>
                     <select onchange="applyFormat('fontSize', this.value)" title="Font size">
                         <option value="">Size</option>
@@ -424,21 +433,37 @@
 
             <div id="group-file-context" class="hidden">
                 <div class="form-group">
-                    <label>File Attachment Format Type</label>
-                    <select id="pub-file-type">
-                        <option value="pdf">Adobe PDF Document (.pdf)</option>
-                        <option value="docx">Microsoft Word Document (.docx)</option>
-                        <option value="image">Image (.jpg / .png)</option>
-                    </select>
+                    <label>PDF Title</label>
+                    <input type="text" id="pub-pdf-title" placeholder="e.g., Quantum Mechanics Review">
                 </div>
 
                 <div class="form-group">
-                    <label>Upload File</label>
-                    <div class="file-drop-zone" onclick="document.getElementById('pub-file-input').click()">
-                        📎 Click to choose a PDF, DOCX, or image file to upload
+                    <label>PDF Description / Notes</label>
+                    <textarea id="pub-pdf-notes" rows="3" placeholder="Brief summary or notes about this PDF..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Upload PDF File</label>
+                    <div class="file-drop-zone" id="file-drop-area" onclick="document.getElementById('pub-file-input').click()">
+                        📎 Click to choose a PDF file to upload
                     </div>
-                    <input type="file" id="pub-file-input" accept=".pdf,.doc,.docx,image/*" class="hidden" onchange="handleAttachmentUpload(this)">
+                    <input type="file" id="pub-file-input" accept=".pdf" class="hidden" onchange="handleAttachmentUpload(this)">
                     <div class="upload-progress-text hidden" id="file-upload-status"></div>
+                    
+                    <!-- Display selected file with delete/replace option -->
+                    <div id="file-selected-display" class="hidden" style="margin-top: 12px; padding: 12px; background: var(--bg-main); border-radius: 8px; border: 1px solid var(--border-color);">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div style="flex: 1;">
+                                <span style="font-size: 1.2rem;">📄</span>
+                                <span id="file-name-display" style="margin-left: 8px; font-family: monospace; font-size: 0.85rem;"></span>
+                            </div>
+                            <div style="display: flex; gap: 8px;">
+                                <button type="button" class="icon-action-btn" onclick="replaceFile()">🔄 Replace</button>
+                                <button type="button" class="icon-action-btn danger" onclick="deleteSelectedFile()">✕ Remove</button>
+                            </div>
+                        </div>
+                    </div>
+                    
                     <input type="hidden" id="pub-file-path" value="">
                     <input type="hidden" id="pub-file-name" value="">
                 </div>
@@ -625,6 +650,21 @@
             document.execCommand(command, false, value);
         };
 
+        window.changeFontFamily = function(selectEl) {
+            const fontValue = selectEl.value;
+            if(!fontValue) { selectEl.value = ''; return; }
+            document.getElementById('pub-content').focus();
+            // Use a span with style attribute for more reliable font application
+            document.execCommand('formatBlock', false, '<span>');
+            document.execCommand('styleWithCSS', true, true);
+            document.execCommand('fontSize', false, '3'); // default size
+            // Apply the font family via execCommand, with fallback style injection
+            const span = document.createElement('span');
+            span.style.fontFamily = fontValue;
+            document.execCommand('insertHTML', false, span.outerHTML);
+            selectEl.value = '';
+        };
+
         // --- Insert an uploaded image or video inline into the essay editor (via Cloudinary) ---
         window.insertMediaIntoEditor = async function(inputEl, mediaKind) {
             const file = inputEl.files[0];
@@ -655,23 +695,39 @@
         window.handleAttachmentUpload = async function(inputEl) {
             const file = inputEl.files[0];
             if(!file) return;
+            if(!file.name.toLowerCase().endsWith('.pdf')) {
+                alert('Only PDF files are supported for upload.');
+                return;
+            }
             const statusEl = document.getElementById('file-upload-status');
             statusEl.classList.remove('hidden');
             statusEl.innerText = `Uploading ${file.name}...`;
             try {
-                // Cloudinary needs to know the resource type: images use "image",
-                // PDFs are also served as "image" (Cloudinary renders/downloads them fine),
-                // and DOCX/other non-media files need "raw".
-                const chosenType = document.getElementById('pub-file-type').value; // pdf | docx | image
-                const resourceType = chosenType === 'docx' ? 'raw' : 'image';
-                const { url } = await uploadToCloudinary(file, resourceType);
+                const { url } = await uploadToCloudinary(file, 'image');
                 document.getElementById('pub-file-path').value = url;
                 document.getElementById('pub-file-name').value = file.name;
                 pendingUploadedFileMeta = { url, name: file.name };
-                statusEl.innerText = `Uploaded: ${file.name}`;
+                statusEl.innerText = `✓ Uploaded: ${file.name}`;
+                
+                // Show file display with delete/replace buttons
+                document.getElementById('file-name-display').innerText = file.name;
+                document.getElementById('file-selected-display').classList.remove('hidden');
             } catch(e) {
                 statusEl.innerText = "Upload failed: " + e.message;
             }
+        };
+
+        window.replaceFile = function() {
+            document.getElementById('pub-file-input').click();
+        };
+
+        window.deleteSelectedFile = function() {
+            document.getElementById('pub-file-path').value = '';
+            document.getElementById('pub-file-name').value = '';
+            document.getElementById('pub-file-input').value = '';
+            document.getElementById('file-selected-display').classList.add('hidden');
+            document.getElementById('file-upload-status').classList.add('hidden');
+            pendingUploadedFileMeta = null;
         };
 
         window.executePublishToCloud = async function() {
@@ -682,20 +738,22 @@
                 ? (document.getElementById('pub-category-other').value.trim() || 'General')
                 : categorySelect;
             const htmlContent = document.getElementById('pub-content').innerHTML.trim();
-            const fileType = document.getElementById('pub-file-type').value;
             const filePath = document.getElementById('pub-file-path').value.trim();
             const fileName = document.getElementById('pub-file-name').value.trim();
+            const pdfTitle = document.getElementById('pub-pdf-title').value.trim();
+            const pdfNotes = document.getElementById('pub-pdf-notes').value.trim();
 
             if(!title) { alert("An entry title header is required."); return; }
-            if(selectedPublishType === 'file' && !filePath) { alert("Please upload a file before publishing."); return; }
+            if(selectedPublishType === 'file' && !filePath) { alert("Please upload a PDF file before publishing."); return; }
 
             const payload = { title, category, type: selectedPublishType, timestamp: new Date().toISOString() };
             if(selectedPublishType === 'post') {
                 payload.content = htmlContent || "<p>No abstract content.</p>";
             } else {
-                payload.fileType = fileType;
                 payload.filePath = filePath;
                 payload.fileName = fileName || filePath;
+                payload.pdfTitle = pdfTitle || title;
+                payload.pdfNotes = pdfNotes || '';
             }
 
             try {
@@ -720,7 +778,10 @@
             document.getElementById('pub-content').innerHTML = '';
             document.getElementById('pub-file-path').value = '';
             document.getElementById('pub-file-name').value = '';
+            document.getElementById('pub-pdf-title').value = '';
+            document.getElementById('pub-pdf-notes').value = '';
             document.getElementById('file-upload-status').classList.add('hidden');
+            document.getElementById('file-selected-display').classList.add('hidden');
             document.getElementById('media-upload-status').classList.add('hidden');
             document.getElementById('publish-modal-title').innerText = 'Publish To Knowledge Hub';
             document.getElementById('publish-submit-btn').innerText = 'Publish Asset';
@@ -800,14 +861,23 @@
             let insideUI = '';
             if(data.type === 'file') {
                 insideUI = `
-                    <div class="entry-meta-badge">📂 ATTACHMENT: *.${(data.fileType || 'file').toUpperCase()}</div>
-                    <p style="font-family: monospace; font-size: 0.8rem; background: var(--bg-main); padding: 8px; border-radius: 4px;">${data.fileName || data.filePath}</p>
-                    <div class="entry-actions">
-                        <button class="btn-primary" style="padding: 6px 14px; font-size: 0.8rem;" onclick="processFileAccess('${id}')">View / Download File</button>
+                    <div style="background: var(--bg-main); padding: 12px; border-radius: 8px; border-left: 4px solid var(--accent-primary);">
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                            <span style="font-size: 1.3rem;">📄</span>
+                            <div>
+                                <div style="font-weight: 600; font-size: 0.9rem;">${data.pdfTitle || data.fileName || 'PDF Document'}</div>
+                                ${data.pdfNotes ? `<div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">${data.pdfNotes}</div>` : ''}
+                            </div>
+                        </div>
+                        <button class="btn-primary" style="padding: 6px 14px; font-size: 0.8rem; width: 100%;" onclick="processFileAccess('${id}')">📥 View / Download PDF</button>
                     </div>
                 `;
             } else {
-                insideUI = `<div class="entry-meta-badge">📝 ESSAY</div><div class="rendered-essay-body">${data.content}</div>`;
+                insideUI = `
+                    <div class="entry-meta-badge">📝 ESSAY</div>
+                    <div class="rendered-essay-body collapsed">${data.content}</div>
+                    <button class="read-more-toggle-btn" onclick="toggleReadMore(this)">Read More ▾</button>
+                `;
             }
 
             const ownerButtons = currentUserIsAdmin ? `
@@ -820,10 +890,6 @@
                 <h4>${data.title}${data.category ? `<span class="category-badge">${data.category}</span>` : ''}</h4>
                 ${insideUI}
                 <div class="entry-actions">
-                    <div class="share-row">
-                        <button class="share-icon-btn">WhatsApp</button>
-                        <button class="share-icon-btn">X Portal</button>
-                    </div>
                     ${ownerButtons}
                 </div>
                 <div class="comment-box-root">
@@ -873,6 +939,17 @@
 
         // Essays are always freely readable. Files (PDF/DOCX/images) are gated:
         // logged-out visitors get a "please sign up or log in" popup instead of the file.
+        // Expands a collapsed essay preview to show the full article, and back again.
+        // Uses direct DOM traversal (not getElementById) because the same entry can be
+        // rendered twice at once (Home feed + Library feed), which would otherwise cause
+        // duplicate-ID lookups to grab the wrong copy.
+        window.toggleReadMore = function(btnEl) {
+            const bodyEl = btnEl.previousElementSibling;
+            if(!bodyEl || !bodyEl.classList.contains('rendered-essay-body')) return;
+            const isCollapsed = bodyEl.classList.toggle('collapsed');
+            btnEl.innerText = isCollapsed ? 'Read More ▾' : 'Show Less ▴';
+        };
+
         window.processFileAccess = async function(id) {
             const entry = allEntriesCache.find(e => e.id === id);
             if(!entry) return;
@@ -1023,15 +1100,29 @@
         }
 
         async function renderAdminUserLedger() {
-            const container = document.getElementById('admin-user-rows'); container.innerHTML = '';
+            const container = document.getElementById('admin-user-rows');
+            container.innerHTML = '';
             try {
                 const snap = await getDocs(collection(db, "users"));
+                let count = 0;
                 snap.forEach(userNode => {
-                    const r = document.createElement('tr'); r.style.borderBottom = "1px solid var(--border-color)";
-                    r.innerHTML = `<td style="padding: 12px; font-family: monospace;">${userNode.data().email}</td><td style="padding: 12px; color: var(--status-green); font-weight: bold;">Verified Profile Node</td>`;
+                    const data = userNode.data();
+                    const r = document.createElement('tr');
+                    r.style.borderBottom = "1px solid var(--border-color)";
+                    const joinedDate = data.joined ? new Date(data.joined).toLocaleDateString() : 'N/A';
+                    const contactLabel = data.contactMode === 'phone' ? '📱 Phone' : '📧 Email';
+                    r.innerHTML = `
+                        <td style="padding: 12px;">${data.fullName || 'N/A'}</td>
+                        <td style="padding: 12px; font-family: monospace; font-size: 0.9rem;">@${data.username || 'N/A'}</td>
+                        <td style="padding: 12px;">${contactLabel}</td>
+                        <td style="padding: 12px; font-family: monospace; font-size: 0.85rem;">${data.contactValue || 'N/A'}</td>
+                        <td style="padding: 12px; font-size: 0.85rem; color: var(--text-muted);">${joinedDate}</td>
+                    `;
                     container.appendChild(r);
+                    count++;
                 });
-            } catch(e){}
+                document.getElementById('user-count-total').innerText = count;
+            } catch(e){ console.error(e); }
         }
     </script>
 
