@@ -82,9 +82,7 @@
             user-select: none;
             color: var(--text-main);
         }
-        .sidebar-toggle-btn:hover {
-            background: var(--border-color);
-        }
+        .sidebar-toggle-btn:hover { background: var(--border-color); }
 
         .nav-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
         .nav-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border-radius: 8px; cursor: pointer; color: var(--text-main); font-weight: 500; transition: 0.2s; }
@@ -120,7 +118,6 @@
         
         body.sidebar-open main { margin-left: 260px; width: calc(100% - 260px); }
         
-        /* 📱 MOBILE RESPONSIVENESS RULES 📱 */
         @media (max-width: 768px) { 
             body.sidebar-open main { margin-left: 0; width: 100%; } 
             main { padding: 20px; }
@@ -134,7 +131,6 @@
             .modal-container { width: 92% !important; max-height: 85vh; padding: 20px; }
             .modal-tabs { grid-template-columns: 1fr; gap: 8px; }
             .entry-card { padding: 18px; }
-            .share-row { flex-wrap: wrap; }
         }
 
         .top-navbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 40px; gap: 20px; }
@@ -169,9 +165,7 @@
         .entry-card p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; margin-bottom: 15px; }
         .entry-meta-badge { display: inline-block; padding: 4px 10px; background: var(--bg-main); border: 1px solid var(--border-color); border-radius: 4px; font-size: 0.75rem; font-weight: bold; margin-bottom: 15px; }
         
-        .entry-actions { display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--border-color); padding-top: 15px; margin-top: 15px; }
-        .share-row { display: flex; gap: 8px; }
-        .share-icon-btn { border: 1px solid var(--border-color); background: var(--bg-main); padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; color: var(--text-main); }
+        .entry-stats-inline { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; display: flex; gap: 12px; }
 
         .comment-box-root { margin-top: 20px; background: var(--bg-main); padding: 16px; border-radius: 8px; }
         .comment-stream { max-height: 160px; overflow-y: auto; margin-bottom: 12px; display: flex; flex-direction: column; gap: 8px; }
@@ -197,7 +191,6 @@
 
         .hidden { display: none !important; }
 
-        /* ---- New feature styles ---- */
         .auth-mode-tabs { display: grid; grid-template-columns: 1fr 1fr; background: var(--bg-main); border-radius: 8px; padding: 4px; margin-bottom: 16px; }
         .auth-mode-tab { padding: 8px; text-align: center; font-size: 0.8rem; font-weight: 600; border-radius: 6px; cursor: pointer; color: var(--text-muted); }
         .auth-mode-tab.active { background: var(--bg-sidebar); color: var(--text-main); }
@@ -211,15 +204,11 @@
         .rich-editor-body:empty:before { content: attr(data-placeholder); color: var(--text-muted); }
         .rich-editor-body img, .rich-editor-body video { max-width: 100%; border-radius: 6px; margin: 8px 0; display: block; }
         .embedded-media-wrapper { position: relative; display: inline-block; max-width: 100%; margin: 8px 0; }
-        .embedded-media-wrapper img, .embedded-media-wrapper video { max-width: 100%; border-radius: 6px; display: block; margin: 0; }
         .embedded-media-remove-btn { position: absolute; top: 6px; right: 6px; width: 26px; height: 26px; border-radius: 50%; border: none; background: rgba(15,23,42,0.75); color: #fff; font-size: 14px; font-weight: bold; cursor: pointer; line-height: 1; display: flex; align-items: center; justify-content: center; }
         .embedded-media-remove-btn:hover { background: #dc2626; }
 
         .rendered-essay-body img, .rendered-essay-body video { max-width: 100%; border-radius: 6px; margin: 10px 0; display: block; }
         .rendered-essay-body { color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; margin-bottom: 15px; }
-        .rendered-essay-body .embedded-media-remove-btn { display: none; }
-        .rendered-essay-body.collapsed { max-height: 4.6em; overflow: hidden; position: relative; }
-        .rendered-essay-body.collapsed::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2.2em; background: linear-gradient(to bottom, transparent, var(--bg-card)); }
         .read-more-toggle-btn { background: none; border: none; color: var(--accent-primary); font-weight: 600; font-size: 0.85rem; cursor: pointer; padding: 4px 0 12px 0; }
         .read-more-toggle-btn:hover { text-decoration: underline; }
 
@@ -227,7 +216,7 @@
         .category-filter-bar { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
         .category-filter-bar select { padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-card); color: var(--text-main); font-size: 0.85rem; }
 
-        .owner-actions { display: flex; gap: 8px; }
+        .owner-actions { display: flex; gap: 8px; margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--border-color); }
         .icon-action-btn { border: 1px solid var(--border-color); background: var(--bg-main); padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; color: var(--text-main); }
         .icon-action-btn.danger { color: #dc2626; border-color: #dc2626; }
         .icon-action-btn:hover { background: var(--border-color); }
@@ -240,6 +229,15 @@
         .gate-modal .modal-container h3 { margin-bottom: 12px; }
         .gate-modal .modal-container p { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px; }
         .gate-modal .modal-footer-btns { justify-content: center; }
+        
+        /* Single View Reading Page Styling */
+        .single-view-container { background: var(--bg-card); border-radius: 12px; border: 1px solid var(--border-color); padding: 40px; margin-top: 20px;}
+        .single-title { font-family: Georgia, serif; font-size: 2.2rem; margin-bottom: 15px; }
+        .single-content { font-size: 1.05rem; line-height: 1.8; color: var(--text-main); margin-top: 25px; }
+        .single-content img { max-width: 100%; border-radius: 8px; margin: 15px 0; }
+        .writer-signature { margin-top: 40px; font-weight: bold; text-align: right; border-top: 1px solid var(--border-color); padding-top: 15px; font-family: Georgia, serif; letter-spacing: 1px;}
+        
+        .related-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-top: 15px; }
     </style>
 </head>
 <body>
@@ -257,6 +255,12 @@
                     <span>📚 Essays & Library</span>
                     <span class="nav-badge" id="library-count-badge">0</span>
                 </li>
+                <li class="nav-item" id="tab-articles" onclick="switchDashboardTab('articles')">
+                    <span>📝 Articles</span>
+                </li>
+                <li class="nav-item" id="tab-pdfs" onclick="switchDashboardTab('pdfs')">
+                    <span>📘 Ebooks & PDFs</span>
+                </li>
                 <li class="nav-item hidden" id="tab-admin" onclick="switchDashboardTab('admin')">
                     <span>🔧 Master Logs</span>
                 </li>
@@ -266,8 +270,7 @@
         <div class="sidebar-footer">
             <div class="intro-popover" id="identity-popover-card">
                 <h4>Wajid Riaz</h4>
-                <p>An undergraduate Physics student at <strong>Bahauddin Zakariya University Multan</strong>, originally hailing from <strong>Dera Ghazi Khan, Pakistan</strong>.</p>
-                <p>Navigating the convergence of rigorous physical frameworks and foundational dialectics, his research spans analytical mechanics, fluid dynamics, and systematic philosophical inquiry.</p>
+                <p><strong>I am An undergraduate student</strong> at <strong>Bahauddin Zakariya University Multan</strong>. I originally belong to <strong>Dera Ghazi Khan</strong>. I am spreading my ignorance through logical and philosophical routes to explain all the <strong>possible and impossible universes</strong> and their phenomenon.</p>
                 <div class="meta-line">Physicist & Philosopher</div>
             </div>
 
@@ -338,7 +341,7 @@
                 </div>
             </div>
 
-            <h3 class="section-title">Featured Philosophical Entries</h3>
+            <h3 class="section-title">Featured Entries</h3>
             <div class="feed-container" id="featured-feed-hook">
                 <p style="color: var(--text-muted)">Querying secure database nodes...</p>
             </div>
@@ -353,6 +356,24 @@
                 </select>
             </div>
             <div class="feed-container" id="extended-library-hook"></div>
+        </div>
+
+        <div id="view-articles" class="hidden">
+            <h3 class="section-title">Articles</h3>
+            <div class="feed-container" id="articles-feed-hook"></div>
+        </div>
+
+        <div id="view-pdfs" class="hidden">
+            <h3 class="section-title">Ebooks & PDFs</h3>
+            <div class="feed-container" id="pdfs-feed-hook"></div>
+        </div>
+
+        <!-- Single View Page Structure (Used for reading individual articles/pdfs) -->
+        <div id="view-single" class="hidden">
+            <button class="btn-secondary" style="margin-bottom: 20px;" onclick="switchDashboardTab('home')">← Back to Hub</button>
+            <div class="single-view-container" id="single-content-hook">
+                <!-- Content gets dynamically injected here -->
+            </div>
         </div>
 
         <div id="view-admin" class="hidden">
@@ -380,8 +401,8 @@
             <input type="hidden" id="pub-edit-id" value="">
             
             <div class="modal-tabs">
-                <div class="modal-tab active" id="tab-mode-post" onclick="setPublishMode('post')">Blog Post / Essay</div>
-                <div class="modal-tab" id="tab-mode-file" onclick="setPublishMode('file')">Upload File Source (PDF / DOCX)</div>
+                <div class="modal-tab active" id="tab-mode-post" onclick="setPublishMode('post')">Article</div>
+                <div class="modal-tab" id="tab-mode-file" onclick="setPublishMode('file')">Ebooks & PDFs</div>
             </div>
 
             <div class="form-group">
@@ -407,14 +428,6 @@
                     <button type="button" onclick="applyFormat('bold')" title="Bold"><b>B</b></button>
                     <button type="button" onclick="applyFormat('underline')" title="Underline"><u>U</u></button>
                     <button type="button" onclick="applyFormat('italic')" title="Italic"><i>I</i></button>
-                    <select onchange="changeFontFamily(this)" title="Font family">
-                        <option value="">Font Family</option>
-                        <option value="Georgia, serif">Georgia</option>
-                        <option value="Arial, sans-serif">Arial</option>
-                        <option value="'Courier New', monospace">Courier New</option>
-                        <option value="'Times New Roman', serif">Times New Roman</option>
-                        <option value="Verdana, sans-serif">Verdana</option>
-                    </select>
                     <select onchange="applyFormat('fontSize', this.value)" title="Font size">
                         <option value="">Size</option>
                         <option value="2">Small</option>
@@ -450,7 +463,6 @@
                     <input type="file" id="pub-file-input" accept=".pdf" class="hidden" onchange="handleAttachmentUpload(this)">
                     <div class="upload-progress-text hidden" id="file-upload-status"></div>
                     
-                    <!-- Display selected file with delete/replace option -->
                     <div id="file-selected-display" class="hidden" style="margin-top: 12px; padding: 12px; background: var(--bg-main); border-radius: 8px; border: 1px solid var(--border-color);">
                         <div style="display: flex; justify-content: space-between; align-items: center;">
                             <div style="flex: 1;">
@@ -532,14 +544,10 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc, getDocs, collection, addDoc, query, orderBy, updateDoc, deleteDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-        // Firebase Storage requires a paid (Blaze) plan, so file/image/video uploads are
-        // handled by Cloudinary instead (free tier, no billing card needed). See the two
-        // constants below — fill these in with your own Cloudinary values (instructions
-        // are in the chat message that came with this file).
+        
         const CLOUDINARY_CLOUD_NAME = "vwcfgbh9";
         const CLOUDINARY_UPLOAD_PRESET = "notebook_unsigned";
 
-        // Corrected Firebase Config (Fixed the '1' vs 'l' typo in apiKey)
         const firebaseConfig = {
             apiKey: "AIzaSyC326Wflij1c_pja2MRVEA_6Eg-pppJb5I",
             authDomain: "wajid-philodophy.firebaseapp.com",
@@ -554,9 +562,6 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // Uploads any file (image, video, pdf, docx...) to Cloudinary's free tier and
-        // returns the public URL Cloudinary gives back. `resourceType` should be
-        // "image", "video", or "raw" (raw = pdf/docx/any non-media file).
         async function uploadToCloudinary(file, resourceType = "auto") {
             const formData = new FormData();
             formData.append("file", file);
@@ -565,23 +570,20 @@
             const endpoint = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/${resourceType}/upload`;
             const response = await fetch(endpoint, { method: "POST", body: formData });
             const result = await response.json();
-            if(!response.ok) {
-                throw new Error(result.error?.message || "Cloudinary upload failed. Check your cloud name & upload preset.");
-            }
+            if(!response.ok) throw new Error(result.error?.message || "Cloudinary upload failed.");
             return { url: result.secure_url, publicId: result.public_id };
         }
 
         let activeAuthMode = 'login';
-        let activeContactMode = 'email'; // 'email' or 'phone'
+        let activeContactMode = 'email';
         let generatedOTP = null;
         let cachedRegDetails = null;
         let userEmailSignature = null;
         let currentUserIsAdmin = false;
         let selectedPublishType = 'post';
-        let allEntriesCache = []; // holds fetched entries for client-side category filtering
-        let pendingUploadedFileMeta = null; // { url, name } for attachment currently staged in publish modal
+        let allEntriesCache = [];
+        let pendingUploadedFileMeta = null;
 
-        // Expose db/storage refs used across window-scoped functions below
         window.__notebookRefs = { db, auth };
 
         async function incrementGlobalPageView() {
@@ -633,39 +635,20 @@
             document.getElementById('group-file-context').classList.toggle('hidden', mode !== 'file');
         };
 
-        // Show/hide the custom category text box when "Other" is picked
         document.getElementById('pub-category').addEventListener('change', (e) => {
             document.getElementById('pub-category-other').classList.toggle('hidden', e.target.value !== 'Other');
         });
 
-        // Lets the user tap the × on an inserted image/video to remove it (works reliably on mobile).
         window.removeEmbeddedMedia = function(btnEl) {
             const wrapper = btnEl.closest('.embedded-media-wrapper');
             if(wrapper) wrapper.remove();
         };
 
-        // --- Rich text formatting toolbar (Bold / Underline / Italic / Font / Size) ---
         window.applyFormat = function(command, value = null) {
             document.getElementById('pub-content').focus();
             document.execCommand(command, false, value);
         };
 
-        window.changeFontFamily = function(selectEl) {
-            const fontValue = selectEl.value;
-            if(!fontValue) { selectEl.value = ''; return; }
-            document.getElementById('pub-content').focus();
-            // Use a span with style attribute for more reliable font application
-            document.execCommand('formatBlock', false, '<span>');
-            document.execCommand('styleWithCSS', true, true);
-            document.execCommand('fontSize', false, '3'); // default size
-            // Apply the font family via execCommand, with fallback style injection
-            const span = document.createElement('span');
-            span.style.fontFamily = fontValue;
-            document.execCommand('insertHTML', false, span.outerHTML);
-            selectEl.value = '';
-        };
-
-        // --- Insert an uploaded image or video inline into the essay editor (via Cloudinary) ---
         window.insertMediaIntoEditor = async function(inputEl, mediaKind) {
             const file = inputEl.files[0];
             if(!file) return;
@@ -674,31 +657,20 @@
             statusEl.innerText = `Uploading ${mediaKind}... please wait.`;
             try {
                 const { url } = await uploadToCloudinary(file, mediaKind === 'image' ? 'image' : 'video');
-                const innerTag = mediaKind === 'image'
-                    ? `<img src="${url}" alt="${file.name}">`
-                    : `<video src="${url}" controls></video>`;
-                // contenteditable="false" makes this whole block an "atomic" island: it can be
-                // tapped/selected and deleted as one unit, which is much more reliable on mobile
-                // than trying to select an inline image/video inside editable text.
+                const innerTag = mediaKind === 'image' ? `<img src="${url}" alt="${file.name}">` : `<video src="${url}" controls></video>`;
                 const embedHTML = `<span class="embedded-media-wrapper" contenteditable="false">${innerTag}<button type="button" class="embedded-media-remove-btn" onclick="removeEmbeddedMedia(this)" title="Remove ${mediaKind}">&times;</button></span>&nbsp;`;
                 document.getElementById('pub-content').focus();
                 document.execCommand('insertHTML', false, embedHTML);
                 statusEl.innerText = `${mediaKind === 'image' ? 'Image' : 'Video'} inserted successfully.`;
                 setTimeout(() => statusEl.classList.add('hidden'), 2500);
-            } catch(e) {
-                statusEl.innerText = "Upload failed: " + e.message;
-            }
+            } catch(e) { statusEl.innerText = "Upload failed: " + e.message; }
             inputEl.value = '';
         };
 
-        // --- Upload a real PDF / DOCX / image attachment to Cloudinary ---
         window.handleAttachmentUpload = async function(inputEl) {
             const file = inputEl.files[0];
             if(!file) return;
-            if(!file.name.toLowerCase().endsWith('.pdf')) {
-                alert('Only PDF files are supported for upload.');
-                return;
-            }
+            if(!file.name.toLowerCase().endsWith('.pdf')) { alert('Only PDF files are supported for upload.'); return; }
             const statusEl = document.getElementById('file-upload-status');
             statusEl.classList.remove('hidden');
             statusEl.innerText = `Uploading ${file.name}...`;
@@ -708,18 +680,12 @@
                 document.getElementById('pub-file-name').value = file.name;
                 pendingUploadedFileMeta = { url, name: file.name };
                 statusEl.innerText = `✓ Uploaded: ${file.name}`;
-                
-                // Show file display with delete/replace buttons
                 document.getElementById('file-name-display').innerText = file.name;
                 document.getElementById('file-selected-display').classList.remove('hidden');
-            } catch(e) {
-                statusEl.innerText = "Upload failed: " + e.message;
-            }
+            } catch(e) { statusEl.innerText = "Upload failed: " + e.message; }
         };
 
-        window.replaceFile = function() {
-            document.getElementById('pub-file-input').click();
-        };
+        window.replaceFile = function() { document.getElementById('pub-file-input').click(); };
 
         window.deleteSelectedFile = function() {
             document.getElementById('pub-file-path').value = '';
@@ -734,9 +700,7 @@
             const editId = document.getElementById('pub-edit-id').value;
             const title = document.getElementById('pub-title').value.trim();
             const categorySelect = document.getElementById('pub-category').value;
-            const category = categorySelect === 'Other'
-                ? (document.getElementById('pub-category-other').value.trim() || 'General')
-                : categorySelect;
+            const category = categorySelect === 'Other' ? (document.getElementById('pub-category-other').value.trim() || 'General') : categorySelect;
             const htmlContent = document.getElementById('pub-content').innerHTML.trim();
             const filePath = document.getElementById('pub-file-path').value.trim();
             const fileName = document.getElementById('pub-file-name').value.trim();
@@ -746,7 +710,7 @@
             if(!title) { alert("An entry title header is required."); return; }
             if(selectedPublishType === 'file' && !filePath) { alert("Please upload a PDF file before publishing."); return; }
 
-            const payload = { title, category, type: selectedPublishType, timestamp: new Date().toISOString() };
+            const payload = { title, category, type: selectedPublishType, timestamp: new Date().toISOString(), views: 0, downloads: 0 };
             if(selectedPublishType === 'post') {
                 payload.content = htmlContent || "<p>No abstract content.</p>";
             } else {
@@ -757,11 +721,8 @@
             }
 
             try {
-                if(editId) {
-                    await updateDoc(doc(db, "notebook_entries", editId), payload);
-                } else {
-                    await addDoc(collection(db, "notebook_entries"), payload);
-                }
+                if(editId) { await updateDoc(doc(db, "notebook_entries", editId), payload); } 
+                else { await addDoc(collection(db, "notebook_entries"), payload); }
                 closePublishModal();
                 fetchDatabaseEntries();
                 fetchAnalyticsMetrics();
@@ -789,7 +750,6 @@
             setPublishMode('post');
         }
 
-        // Open the publish modal pre-filled with an existing entry's data, for admin editing.
         window.editEntry = async function(id) {
             try {
                 const snap = await getDoc(doc(db, "notebook_entries", id));
@@ -822,11 +782,11 @@
             } catch(e) { alert("Could not load entry for editing: " + e.message); }
         };
 
-        // Permanently delete a published entry (admin only, gated in the UI already).
         window.deleteEntry = async function(id, title) {
             if(!confirm(`Delete "${title}" permanently? This cannot be undone.`)) return;
             try {
                 await deleteDoc(doc(db, "notebook_entries", id));
+                switchDashboardTab('home');
                 fetchDatabaseEntries();
                 fetchAnalyticsMetrics();
             } catch(e) { alert("Delete failed: " + e.message); }
@@ -843,8 +803,7 @@
                 document.getElementById('library-count-badge').innerText = allEntriesCache.length;
 
                 populateCategoryFilter();
-                renderHomeFeed();
-                renderLibraryFeed();
+                renderFeeds();
             } catch(e) { console.error(e); }
         }
 
@@ -857,65 +816,27 @@
             select.value = categories.includes(existingSelection) ? existingSelection : 'all';
         }
 
-        function buildEntryCardHTML(id, data) {
-            let insideUI = '';
-            if(data.type === 'file') {
-                insideUI = `
-                    <div style="background: var(--bg-main); padding: 12px; border-radius: 8px; border-left: 4px solid var(--accent-primary);">
-                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-                            <span style="font-size: 1.3rem;">📄</span>
-                            <div>
-                                <div style="font-weight: 600; font-size: 0.9rem;">${data.pdfTitle || data.fileName || 'PDF Document'}</div>
-                                ${data.pdfNotes ? `<div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">${data.pdfNotes}</div>` : ''}
-                            </div>
-                        </div>
-                        <button class="btn-primary" style="padding: 6px 14px; font-size: 0.8rem; width: 100%;" onclick="processFileAccess('${id}')">📥 View / Download PDF</button>
-                    </div>
-                `;
-            } else {
-                insideUI = `
-                    <div class="entry-meta-badge">📝 ESSAY</div>
-                    <div class="rendered-essay-body collapsed">${data.content}</div>
-                    <button class="read-more-toggle-btn" onclick="toggleReadMore(this)">Read More ▾</button>
-                `;
-            }
+        function renderFeeds() {
+            // Home Feed (Featured - limit 5)
+            const homeTarget = document.getElementById('featured-feed-hook');
+            homeTarget.innerHTML = '';
+            allEntriesCache.slice(0, 5).forEach(e => homeTarget.appendChild(createSummaryCard(e.id, e.data)));
 
-            const ownerButtons = currentUserIsAdmin ? `
-                <div class="owner-actions">
-                    <button class="icon-action-btn" onclick="editEntry('${id}')">✏️ Edit</button>
-                    <button class="icon-action-btn danger" onclick="deleteEntry('${id}', '${(data.title || '').replace(/'/g, "\\'")}')">🗑️ Delete</button>
-                </div>` : '';
+            // Articles Feed
+            const artTarget = document.getElementById('articles-feed-hook');
+            artTarget.innerHTML = '';
+            const articles = allEntriesCache.filter(e => e.data.type === 'post');
+            if(articles.length === 0) artTarget.innerHTML = `<p style="color: var(--text-muted)">No articles available.</p>`;
+            articles.forEach(e => artTarget.appendChild(createSummaryCard(e.id, e.data)));
 
-            return `
-                <h4>${data.title}${data.category ? `<span class="category-badge">${data.category}</span>` : ''}</h4>
-                ${insideUI}
-                <div class="entry-actions">
-                    ${ownerButtons}
-                </div>
-                <div class="comment-box-root">
-                    <div class="comment-stream" id="stream-hook-${id}">Loading comments...</div>
-                    <div class="comment-form">
-                        <input type="text" id="comm-input-${id}" placeholder="${userEmailSignature ? 'Add to dialectic...' : 'Sign in to leave critiques'}" ${userEmailSignature ? '' : 'disabled'}>
-                        <button class="btn-primary" style="padding: 6px 14px; font-size: 0.8rem;" onclick="submitCommentNode('${id}')" ${userEmailSignature ? '' : 'disabled'}>Send</button>
-                    </div>
-                </div>
-            `;
-        }
+            // PDFs Feed
+            const pdfTarget = document.getElementById('pdfs-feed-hook');
+            pdfTarget.innerHTML = '';
+            const pdfs = allEntriesCache.filter(e => e.data.type === 'file');
+            if(pdfs.length === 0) pdfTarget.innerHTML = `<p style="color: var(--text-muted)">No files available.</p>`;
+            pdfs.forEach(e => pdfTarget.appendChild(createSummaryCard(e.id, e.data)));
 
-        function renderHomeFeed() {
-            const target = document.getElementById('featured-feed-hook');
-            target.innerHTML = '';
-            if(allEntriesCache.length === 0) {
-                target.innerHTML = `<p style="color: var(--text-muted)">No items in cloud architecture database.</p>`;
-                return;
-            }
-            allEntriesCache.slice(0, 5).forEach(({id, data}) => {
-                const el = document.createElement('div');
-                el.className = 'entry-card';
-                el.innerHTML = buildEntryCardHTML(id, data);
-                target.appendChild(el);
-                fetchCommentsForCard(id);
-            });
+            renderLibraryFeed();
         }
 
         window.renderLibraryFeed = function() {
@@ -928,34 +849,155 @@
                 target.innerHTML = `<p style="color: var(--text-muted)">No items match this category.</p>`;
                 return;
             }
-            filtered.forEach(({id, data}) => {
-                const el = document.createElement('div');
-                el.className = 'entry-card';
-                el.innerHTML = buildEntryCardHTML(id, data);
-                target.appendChild(el);
-                fetchCommentsForCard(id);
-            });
+            filtered.forEach(e => target.appendChild(createSummaryCard(e.id, e.data)));
         };
 
-        // Essays are always freely readable. Files (PDF/DOCX/images) are gated:
-        // logged-out visitors get a "please sign up or log in" popup instead of the file.
-        // Expands a collapsed essay preview to show the full article, and back again.
-        // Uses direct DOM traversal (not getElementById) because the same entry can be
-        // rendered twice at once (Home feed + Library feed), which would otherwise cause
-        // duplicate-ID lookups to grab the wrong copy.
-        window.toggleReadMore = function(btnEl) {
-            const bodyEl = btnEl.previousElementSibling;
-            if(!bodyEl || !bodyEl.classList.contains('rendered-essay-body')) return;
-            const isCollapsed = bodyEl.classList.toggle('collapsed');
-            btnEl.innerText = isCollapsed ? 'Read More ▾' : 'Show Less ▴';
+        // Creates the minimal summary card for the feeds (No Comments)
+        function createSummaryCard(id, data) {
+            const el = document.createElement('div');
+            el.className = 'entry-card';
+            
+            const v = data.views || 0;
+            const d = data.downloads || 0;
+            const statHTML = data.type === 'file' ? `👁 ${v} Views | ⬇ ${d} Downloads` : `👁 ${v} Views`;
+
+            let snippetHTML = '';
+            if(data.type === 'file') {
+                snippetHTML = `
+                    <div style="background: var(--bg-main); padding: 12px; border-radius: 8px; border-left: 4px solid var(--accent-primary); margin-top:15px;">
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                            <span style="font-size: 1.3rem;">📄</span>
+                            <div>
+                                <div style="font-weight: 600; font-size: 0.9rem;">${data.pdfTitle || data.fileName || 'PDF Document'}</div>
+                                ${data.pdfNotes ? `<div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">${data.pdfNotes.substring(0, 80)}...</div>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                let rawText = data.content.replace(/<[^>]+>/g, ' ');
+                let shortText = rawText.length > 150 ? rawText.substring(0, 150) + '...' : rawText;
+                snippetHTML = `
+                    <div class="entry-meta-badge" style="margin-top:10px;">📝 ARTICLE</div>
+                    <div class="rendered-essay-body">${shortText}</div>
+                `;
+            }
+
+            el.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                    <h4>${data.title}${data.category ? `<span class="category-badge">${data.category}</span>` : ''}</h4>
+                    <div class="entry-stats-inline">${statHTML}</div>
+                </div>
+                ${snippetHTML}
+                <div style="margin-top:15px;">
+                    <button class="read-more-toggle-btn" style="font-size: 0.9rem;" onclick="openSingleView('${id}')">${data.type === 'file' ? 'View PDF Details ▾' : 'Read More ▾'}</button>
+                </div>
+            `;
+            return el;
+        }
+
+        // Logic to open full article / pdf in a dedicated "page tab"
+        window.openSingleView = async function(id) {
+            // Update view count remotely
+            try { await updateDoc(doc(db, "notebook_entries", id), { views: increment(1) }); } catch(e){}
+            
+            const entryIndex = allEntriesCache.findIndex(e => e.id === id);
+            if(entryIndex > -1) { allEntriesCache[entryIndex].data.views = (allEntriesCache[entryIndex].data.views || 0) + 1; }
+            
+            const entry = allEntriesCache.find(e => e.id === id);
+            if(!entry) return;
+
+            // Hide standard views, show single view
+            document.querySelectorAll('main > div[id^="view-"]').forEach(v => v.classList.add('hidden'));
+            document.getElementById('view-single').classList.remove('hidden');
+
+            const target = document.getElementById('single-content-hook');
+            const data = entry.data;
+
+            let mainContent = '';
+            if (data.type === 'file') {
+                mainContent = `
+                    <h1 class="single-title">${data.pdfTitle || data.title}</h1>
+                    <div class="entry-stats-inline" style="margin-bottom: 20px;">👁 ${data.views || 0} Views | ⬇ ${data.downloads || 0} Downloads</div>
+                    <div style="background: var(--bg-main); padding: 25px; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 20px;">
+                        <span style="font-size: 2rem; display:block; margin-bottom:10px;">📄</span>
+                        <p style="color:var(--text-main); font-size:1.05rem; margin-bottom:20px;">${data.pdfNotes}</p>
+                        <button class="btn-primary" onclick="processFileAccess('${id}')">📥 View / Download PDF</button>
+                    </div>
+                `;
+            } else {
+                mainContent = `
+                    <h1 class="single-title">${data.title}</h1>
+                    <div class="entry-stats-inline" style="margin-bottom: 20px;">👁 ${data.views || 0} Views</div>
+                    <div class="single-content">${data.content}</div>
+                    <div class="writer-signature">BY WAJID RIAZ</div>
+                `;
+            }
+
+            const ownerButtons = currentUserIsAdmin ? `
+                <div class="owner-actions">
+                    <button class="icon-action-btn" onclick="editEntry('${id}')">✏️ Edit</button>
+                    <button class="icon-action-btn danger" onclick="deleteEntry('${id}', '${(data.title || '').replace(/'/g, "\\'")}')">🗑️ Delete</button>
+                </div>` : '';
+
+            // Related/Similar Content
+            let similar = allEntriesCache.filter(e => e.data.type === data.type && e.id !== id).slice(0, 3);
+            let similarHTML = '';
+            if(similar.length > 0) {
+                similarHTML = `
+                    <div style="margin-top: 50px; border-top: 1px solid var(--border-color); padding-top: 30px;">
+                        <h4 style="font-family: Georgia, serif; font-size: 1.2rem;">You may also like</h4>
+                        <div class="related-grid">
+                            ${similar.map(s => `
+                                <div class="entry-card" style="cursor:pointer; padding: 15px;" onclick="openSingleView('${s.id}')">
+                                    <strong style="display:block; margin-bottom: 5px;">${s.data.title}</strong>
+                                    <span style="font-size:0.75rem; color:var(--text-muted); font-weight: bold;">${s.data.type === 'file' ? 'PDF File' : 'Article'}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+
+            target.innerHTML = `
+                ${mainContent}
+                ${ownerButtons}
+                
+                <div class="comment-box-root" style="margin-top: 40px; border: 1px solid var(--border-color);">
+                    <h4 style="margin-bottom: 15px; font-family: Georgia, serif;">Discussion</h4>
+                    <div class="comment-stream" id="stream-hook-${id}">Loading comments...</div>
+                    <div class="comment-form">
+                        <input type="text" id="comm-input-${id}" placeholder="${userEmailSignature ? 'Add a Comment...' : 'Sign in to leave a comment'}" ${userEmailSignature ? '' : 'disabled'}>
+                        <button class="btn-primary" style="padding: 6px 14px; font-size: 0.8rem;" onclick="submitCommentNode('${id}')" ${userEmailSignature ? '' : 'disabled'}>Post</button>
+                    </div>
+                </div>
+                
+                ${similarHTML}
+            `;
+            
+            fetchCommentsForCard(id);
+            window.scrollTo(0,0);
         };
 
         window.processFileAccess = async function(id) {
-            const entry = allEntriesCache.find(e => e.id === id);
-            if(!entry) return;
+            const entryIndex = allEntriesCache.findIndex(e => e.id === id);
+            if(entryIndex === -1) return;
+            const entry = allEntriesCache[entryIndex];
+            
             if(userEmailSignature) {
                 window.open(entry.data.filePath, '_blank');
-                try { await updateDoc(doc(db, "analytics", "global_metrics"), { total_downloads: increment(1) }); fetchAnalyticsMetrics(); } catch(e){}
+                try { 
+                    await updateDoc(doc(db, "notebook_entries", id), { downloads: increment(1) });
+                    await updateDoc(doc(db, "analytics", "global_metrics"), { total_downloads: increment(1) }); 
+                    
+                    allEntriesCache[entryIndex].data.downloads = (allEntriesCache[entryIndex].data.downloads || 0) + 1;
+                    
+                    // Re-render single view to update visible download count if they are still on the page
+                    if(!document.getElementById('view-single').classList.contains('hidden')) {
+                        openSingleView(id);
+                    }
+                    fetchAnalyticsMetrics(); 
+                } catch(e){}
             } else {
                 openGateModal();
             }
@@ -982,7 +1024,7 @@
                 try {
                     const q = query(collection(db, "notebook_entries", id, "comments"), orderBy("timestamp", "asc"));
                     const snap = await getDocs(q);
-                    if(snap.empty) { zone.innerHTML = `<p style="font-size: 0.75rem; color: var(--text-muted);">No notes appended yet.</p>`; return; }
+                    if(snap.empty) { zone.innerHTML = `<p style="font-size: 0.75rem; color: var(--text-muted);">No comments yet.</p>`; return; }
                     snap.forEach(comment => {
                         const cData = comment.data();
                         const b = document.createElement('div'); b.className = 'comment-node';
@@ -993,13 +1035,6 @@
             });
         }
 
-        // Toggle between "Email" and "Phone Number" as the contact method during login/signup.
-        // NOTE: Firebase's client email/password auth doesn't natively support phone login
-        // (real phone auth needs SMS/reCAPTCHA verification). So when "Phone" is chosen at
-        // signup, we still create a real Firebase Auth account behind the scenes using a
-        // generated placeholder address (phone@notebook-phone.local) — the user's real phone
-        // number is stored on their profile document for display/contact purposes, and they
-        // sign back in using that same phone number afterward.
         window.setContactMode = function(mode) {
             activeContactMode = mode;
             document.getElementById('contact-tab-email').classList.toggle('active', mode === 'email');
@@ -1023,10 +1058,8 @@
             document.getElementById('auth-action-btn').onclick = target === 'login' ? executeLoginWorkflow : executeRegistrationWorkflow;
         };
 
-        // Resolves whatever the user typed (email or phone) into a real address Firebase Auth can use.
         function resolveAuthIdentifier(rawValue) {
             if (activeContactMode === 'email') return rawValue;
-            // Phone mode: build a stable placeholder email from the digits of the phone number.
             const digitsOnly = rawValue.replace(/\D/g, '');
             return `${digitsOnly}@notebook-phone.local`;
         }
@@ -1049,13 +1082,7 @@
             if(pass.length < 6) { alert("Password must be at least 6 characters."); return; }
 
             const resolvedEmail = resolveAuthIdentifier(rawContact);
-            cachedRegDetails = {
-                fullName, username,
-                contactMode: activeContactMode,
-                contactValue: rawContact,
-                email: resolvedEmail,
-                pass
-            };
+            cachedRegDetails = { fullName, username, contactMode: activeContactMode, contactValue: rawContact, email: resolvedEmail, pass };
             generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
             alert(`[SECURE SIMULATION PROTOCOL]\nVerification Token: ${generatedOTP}`);
             document.getElementById('auth-modal-title').innerText = 'Enter 6-Digit OTP Token';
@@ -1072,12 +1099,9 @@
                 try {
                     const res = await createUserWithEmailAndPassword(auth, cachedRegDetails.email, cachedRegDetails.pass);
                     await setDoc(doc(db, "users", res.user.uid), {
-                        fullName: cachedRegDetails.fullName,
-                        username: cachedRegDetails.username,
-                        contactMode: cachedRegDetails.contactMode,
-                        contactValue: cachedRegDetails.contactValue,
-                        email: cachedRegDetails.email,
-                        joined: new Date().toISOString()
+                        fullName: cachedRegDetails.fullName, username: cachedRegDetails.username,
+                        contactMode: cachedRegDetails.contactMode, contactValue: cachedRegDetails.contactValue,
+                        email: cachedRegDetails.email, joined: new Date().toISOString()
                     });
                     closeAuthModal();
                 } catch(e) { alert(e.message); }
@@ -1085,9 +1109,7 @@
         }
 
         window.executeLogoutWorkflow = async function() { await signOut(auth); };
-        document.getElementById('auth-action-trigger').addEventListener('click', () => {
-            if(userEmailSignature) { executeLogoutWorkflow(); }
-        });
+        document.getElementById('auth-action-trigger').addEventListener('click', () => { if(userEmailSignature) { executeLogoutWorkflow(); } });
 
         async function fetchAnalyticsMetrics() {
             try {
@@ -1154,15 +1176,17 @@
             });
         }
 
-        function switchDashboardTab(targetTab) {
-            ['home', 'library', 'admin'].forEach(tab => {
+        window.switchDashboardTab = function(targetTab) {
+            ['home', 'library', 'articles', 'pdfs', 'admin', 'single'].forEach(tab => {
                 const view = document.getElementById(`view-${tab}`);
                 const tabBtn = document.getElementById(`tab-${tab}`);
                 if(view) view.classList.add('hidden');
                 if(tabBtn) tabBtn.classList.remove('active');
             });
             document.getElementById(`view-${targetTab}`).classList.remove('hidden');
-            document.getElementById(`tab-${targetTab}`).classList.add('active');
+            if(document.getElementById(`tab-${targetTab}`)) {
+                document.getElementById(`tab-${targetTab}`).classList.add('active');
+            }
             
             document.getElementById('app-sidebar-node').classList.remove('active');
             document.body.classList.remove('sidebar-open');
@@ -1173,15 +1197,12 @@
             document.getElementById('identity-popover-card').classList.toggle('active');
         }
 
-        document.addEventListener('click', () => {
-            document.getElementById('identity-popover-card').classList.remove('active');
-        });
+        document.addEventListener('click', () => { document.getElementById('identity-popover-card').classList.remove('active'); });
 
-        function openPublishModal() { document.getElementById('modal-publish').classList.add('active'); }
-        function closePublishModal() { document.getElementById('modal-publish').classList.remove('active'); }
-        function openAuthModal() { document.getElementById('modal-auth').classList.add('active'); }
-        function closeAuthModal() { document.getElementById('modal-auth').classList.remove('active'); }
-
+        window.openPublishModal = function() { document.getElementById('modal-publish').classList.add('active'); }
+        window.closePublishModal = function() { document.getElementById('modal-publish').classList.remove('active'); }
+        window.openAuthModal = function() { document.getElementById('modal-auth').classList.add('active'); }
+        window.closeAuthModal = function() { document.getElementById('modal-auth').classList.remove('active'); }
     </script>
 </body>
 </html>
