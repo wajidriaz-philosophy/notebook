@@ -583,6 +583,7 @@
         let selectedPublishType = 'post';
         let allEntriesCache = [];
         let pendingUploadedFileMeta = null;
+        let hasCountedGlobalView = false; // Prevents spamming page view on load
 
         window.__notebookRefs = { db, auth };
 
@@ -593,8 +594,7 @@
             }
             fetchAnalyticsMetrics();
         }
-        incrementGlobalPageView();
-
+        
         onAuthStateChanged(auth, (user) => {
             if(user) {
                 userEmailSignature = user.email;
@@ -624,6 +624,13 @@
                 document.getElementById('admin-only-stats-wrapper').classList.add('hidden'); 
                 switchDashboardTab('home');
             }
+
+            // Only increment global views if the user is NOT the admin, and do it only once per session load
+            if (!currentUserIsAdmin && !hasCountedGlobalView) {
+                incrementGlobalPageView();
+                hasCountedGlobalView = true;
+            }
+
             fetchDatabaseEntries();
         });
 
@@ -898,11 +905,16 @@
 
         // Logic to open full article / pdf in a dedicated "page tab"
         window.openSingleView = async function(id) {
-            // Update view count remotely
-            try { await updateDoc(doc(db, "notebook_entries", id), { views: increment(1) }); } catch(e){}
             
-            const entryIndex = allEntriesCache.findIndex(e => e.id === id);
-            if(entryIndex > -1) { allEntriesCache[entryIndex].data.views = (allEntriesCache[entryIndex].data.views || 0) + 1; }
+            // ADMIN BYPASS LOGIC: Only count views if the user is not the admin
+            if (!currentUserIsAdmin) {
+                try { await updateDoc(doc(db, "notebook_entries", id), { views: increment(1) }); } catch(e){}
+                
+                const entryIndex = allEntriesCache.findIndex(e => e.id === id);
+                if(entryIndex > -1) { 
+                    allEntriesCache[entryIndex].data.views = (allEntriesCache[entryIndex].data.views || 0) + 1; 
+                }
+            }
             
             const entry = allEntriesCache.find(e => e.id === id);
             if(!entry) return;
@@ -986,18 +998,22 @@
             
             if(userEmailSignature) {
                 window.open(entry.data.filePath, '_blank');
-                try { 
-                    await updateDoc(doc(db, "notebook_entries", id), { downloads: increment(1) });
-                    await updateDoc(doc(db, "analytics", "global_metrics"), { total_downloads: increment(1) }); 
-                    
-                    allEntriesCache[entryIndex].data.downloads = (allEntriesCache[entryIndex].data.downloads || 0) + 1;
-                    
-                    // Re-render single view to update visible download count if they are still on the page
-                    if(!document.getElementById('view-single').classList.contains('hidden')) {
-                        openSingleView(id);
-                    }
-                    fetchAnalyticsMetrics(); 
-                } catch(e){}
+                
+                // ADMIN BYPASS LOGIC: Only increment downloads if not admin
+                if (!currentUserIsAdmin) {
+                    try { 
+                        await updateDoc(doc(db, "notebook_entries", id), { downloads: increment(1) });
+                        await updateDoc(doc(db, "analytics", "global_metrics"), { total_downloads: increment(1) }); 
+                        
+                        allEntriesCache[entryIndex].data.downloads = (allEntriesCache[entryIndex].data.downloads || 0) + 1;
+                        
+                        // Re-render single view to update visible download count if they are still on the page
+                        if(!document.getElementById('view-single').classList.contains('hidden')) {
+                            openSingleView(id);
+                        }
+                        fetchAnalyticsMetrics(); 
+                    } catch(e){}
+                }
             } else {
                 openGateModal();
             }
