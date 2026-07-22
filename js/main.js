@@ -4,7 +4,6 @@
 
 import { showToast } from "./toast.js";
 
-// Global cache or lookup mechanism for entries (assumes entries are stored or fetched)
 let currentEntriesCache = [];
 
 export function setEntriesCache(entries) {
@@ -12,7 +11,6 @@ export function setEntriesCache(entries) {
 }
 
 export function openSingleView(entryId) {
-  // 1. Find the entry by ID from your active application state/cache
   const entry = currentEntriesCache.find(e => String(e.id) === String(entryId)) || window.allEntriesCache?.find(e => String(e.id) === String(entryId));
   
   if (!entry) {
@@ -20,18 +18,18 @@ export function openSingleView(entryId) {
     return;
   }
 
-  // 2. Hide all dashboard and list views
+  // Hide all dashboard and list views
   const views = ['view-home', 'view-library', 'view-articles', 'view-pdfs', 'view-profile', 'view-admin'];
   views.forEach(viewId => {
     const el = document.getElementById(viewId);
     if (el) el.classList.add('hidden');
   });
 
-  // 3. Reveal the single view section
+  // Reveal the single view section
   const singleView = document.getElementById('view-single');
   if (singleView) singleView.classList.remove('hidden');
 
-  // 4. Inject content into the single view hook
+  // Inject content into the single view hook
   const contentHook = document.getElementById('single-content-hook');
   if (contentHook) {
     contentHook.innerHTML = `
@@ -48,16 +46,14 @@ export function openSingleView(entryId) {
     `;
   }
 
-  // 5. Handle Action Bar (Download & Discussions) for PDFs, Ebooks, and Articles
+  // Handle Action Bar (Download & Discussions) for PDFs, Ebooks, and Articles
   const actionBar = document.getElementById('single-action-bar');
   if (actionBar) {
-    // Show action bar for both files and articles so users can discuss or download if available
     actionBar.classList.remove('hidden');
 
     const downloadBtn = document.getElementById('btn-download');
     const discussBtn = document.getElementById('btn-discuss');
 
-    // Configure Download Button
     if (downloadBtn) {
       if (entry.filePath || entry.fileUrl) {
         downloadBtn.style.display = 'inline-block';
@@ -72,16 +68,13 @@ export function openSingleView(entryId) {
           showToast("Downloading file...", "success");
         };
       } else {
-        // Hide download button if it's a pure text article with no file attachment
         downloadBtn.style.display = 'none';
       }
     }
 
-    // Configure Discussion Button
     if (discussBtn) {
       discussBtn.onclick = () => {
         showToast("Opening discussion thread...", "success");
-        // Scroll down to comments section if present
         const commentSection = document.getElementById(`comments-section-${entryId}`) || document.getElementById('discussion-section-hook');
         if (commentSection) {
           commentSection.scrollIntoView({ behavior: 'smooth' });
@@ -90,7 +83,6 @@ export function openSingleView(entryId) {
     }
   }
 
-  // 6. Scroll smoothly to the top of the page
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
