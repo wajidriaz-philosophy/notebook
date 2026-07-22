@@ -1,0 +1,152 @@
+/* ==========================================================================
+   Layout — main content area, top navbar, hub header, stats
+   ========================================================================== */
+
+.app-main {
+  margin-left: 0;
+  padding: var(--space-4xl);
+  width: 100%;
+  transition: margin-left var(--transition-slow), width var(--transition-slow);
+}
+
+body.sidebar-open .app-main {
+  margin-left: var(--sidebar-width);
+  width: calc(100% - var(--sidebar-width));
+}
+
+.top-navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-4xl);
+  gap: var(--space-xl);
+}
+
+.search-bar {
+  position: relative;
+  flex-grow: 1;
+  max-width: 500px;
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+}
+
+.search-bar input {
+  width: 100%;
+  padding: 10px var(--space-lg);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  background: var(--bg-card);
+  color: var(--text-main);
+}
+
+.brand-lockup {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  white-space: nowrap;
+  margin-right: var(--space-sm);
+}
+
+.brand-lockup span.brand-name {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: var(--text-main);
+}
+
+.navbar-actions {
+  display: flex;
+  gap: var(--space-md);
+}
+
+.hub-header {
+  margin-bottom: var(--space-3xl);
+}
+.hub-header h1 {
+  font-size: 2rem;
+  color: var(--text-main);
+  margin-bottom: var(--space-xs);
+  font-family: var(--font-serif);
+}
+.hub-header p {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+.stats-container {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: var(--space-xl);
+  margin-bottom: var(--space-4xl);
+}
+
+.stats-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: var(--space-2xl);
+  position: relative;
+}
+
+.card-title {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.metrics-subgrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-lg);
+}
+
+.metric-tile {
+  background: var(--bg-main);
+  padding: var(--space-lg);
+  border-radius: var(--radius-md);
+  text-align: center;
+}
+.metric-tile h3 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+.metric-tile p {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.status-badge {
+  color: var(--status-green);
+  font-size: 1.4rem;
+  font-weight: 700;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 70%;
+  font-family: var(--font-serif);
+}
+.status-dot {
+  width: 8px;
+  height: 8px;
+  background-color: var(--status-green);
+  border-radius: var(--radius-round);
+  display: inline-block;
+  margin-right: 6px;
+}
+
+.section-title {
+  font-size: 1.25rem;
+  font-family: var(--font-serif);
+  margin-bottom: var(--space-xl);
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 10px;
+}

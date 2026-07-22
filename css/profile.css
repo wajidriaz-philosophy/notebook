@@ -1,0 +1,111 @@
+/* ==========================================================================
+   User Profile page (new feature)
+   ========================================================================== */
+
+.profile-page-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xl);
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: var(--space-2xl);
+  margin-bottom: var(--space-xl);
+}
+
+.profile-page-header .profile-name-block h2 {
+  font-family: var(--font-serif);
+  font-size: 1.5rem;
+  margin-bottom: 4px;
+}
+.profile-page-header .profile-name-block .username {
+  color: var(--text-muted);
+  font-family: monospace;
+  font-size: 0.9rem;
+  margin-bottom: 6px;
+}
+
+.profile-role-pill {
+  display: inline-block;
+  padding: 3px 10px;
+  background: var(--accent-primary);
+  color: var(--btn-text);
+  border-radius: var(--radius-pill);
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.profile-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-lg);
+  margin-bottom: var(--space-2xl);
+}
+
+.profile-stat-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: var(--space-lg);
+  text-align: center;
+}
+.profile-stat-card h3 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-bottom: 2px;
+  color: var(--accent-primary);
+}
+.profile-stat-card p {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.profile-section {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: var(--space-2xl);
+  margin-bottom: var(--space-xl);
+}
+.profile-section h4 {
+  font-family: var(--font-serif);
+  font-size: 1.1rem;
+  margin-bottom: var(--space-lg);
+}
+
+.profile-detail-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border-color);
+  font-size: 0.9rem;
+}
+.profile-detail-row:last-child {
+  border-bottom: none;
+}
+.profile-detail-row span:first-child {
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.profile-bio-text {
+  color: var(--text-main);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+.profile-bio-empty {
+  color: var(--text-muted);
+  font-style: italic;
+  font-size: 0.9rem;
+}
+
+.profile-actions-row {
+  display: flex;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+}

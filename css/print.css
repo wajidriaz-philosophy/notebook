@@ -1,0 +1,66 @@
+/* ==========================================================================
+   Print styles
+   Produces a clean, readable printout of the currently open article,
+   hiding all app chrome (sidebar, nav, buttons, comments, toasts).
+   ========================================================================== */
+
+@media print {
+  .app-sidebar,
+  .sidebar-backdrop,
+  .top-navbar,
+  .toast-container,
+  .modal-overlay,
+  .owner-actions,
+  .comment-box-root,
+  .related-grid,
+  .read-more-toggle-btn,
+  .sidebar-toggle-btn,
+  .navbar-actions,
+  #view-home .stats-container,
+  .category-filter-bar {
+    display: none !important;
+  }
+
+  body {
+    display: block;
+    background: #fff !important;
+    color: #000 !important;
+  }
+
+  .app-main {
+    margin-left: 0 !important;
+    width: 100% !important;
+    padding: 0 !important;
+  }
+
+  .single-view-container {
+    border: none;
+    box-shadow: none;
+    padding: 0;
+    background: #fff !important;
+  }
+
+  .single-title {
+    color: #000 !important;
+  }
+
+  .single-content,
+  .single-content * {
+    color: #000 !important;
+  }
+
+  .single-content img {
+    max-width: 100% !important;
+    page-break-inside: avoid;
+  }
+
+  a[href]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.75rem;
+    color: #555;
+  }
+
+  .writer-signature {
+    border-top: 1px solid #000;
+  }
+}

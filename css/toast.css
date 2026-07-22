@@ -1,0 +1,110 @@
+/* ==========================================================================
+   Toast notifications
+   Non-blocking, auto-dismissing notifications shown bottom-right.
+   ========================================================================== */
+
+.toast-container {
+  position: fixed;
+  bottom: var(--space-xl);
+  right: var(--space-xl);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  max-width: 340px;
+  pointer-events: none;
+}
+
+.toast {
+  pointer-events: auto;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-md);
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-left: 4px solid var(--accent-primary);
+  border-radius: var(--radius-md);
+  padding: var(--space-md) var(--space-lg);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
+  font-size: 0.85rem;
+  color: var(--text-main);
+  animation: toast-in var(--transition-slow) forwards;
+}
+
+.toast.toast--leaving {
+  animation: toast-out var(--transition-normal) forwards;
+}
+
+.toast--success {
+  border-left-color: var(--success-green);
+}
+.toast--error {
+  border-left-color: var(--error-red);
+}
+.toast--warning {
+  border-left-color: var(--warning-yellow);
+}
+
+.toast-icon {
+  font-size: 1.1rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.toast--success .toast-icon {
+  color: var(--success-green);
+}
+.toast--error .toast-icon {
+  color: var(--error-red);
+}
+.toast--warning .toast-icon {
+  color: var(--warning-yellow);
+}
+
+.toast-message {
+  flex: 1;
+  line-height: 1.4;
+}
+
+.toast-close {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1;
+  padding: 0;
+  flex-shrink: 0;
+}
+.toast-close:hover {
+  color: var(--text-main);
+}
+
+@keyframes toast-in {
+  from {
+    transform: translateX(120%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes toast-out {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(120%);
+    opacity: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .toast-container {
+    left: var(--space-md);
+    right: var(--space-md);
+    max-width: none;
+  }
+}
