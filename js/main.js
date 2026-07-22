@@ -1,91 +1,148 @@
 // ============================================================================
-// singleView.js — Manages rendering individual articles and PDFs/ebooks
+// main.js — application bootstrap. Wires every interactive control via
+// addEventListener (no inline onclick anywhere) using event delegation for
+// anything rendered dynamically (feed cards, comments, admin rows, etc.).
 // ============================================================================
 
-import { showToast } from "./toast.js";
+import { initTheme, setTheme } from "./theme.js";
+import { initSidebar, toggleSidebar } from "./sidebar.js";
+import { switchDashboardTab } from "./tabs.js";
+import {
+  openPublishModal,
+  closePublishModal,
+  openAuthModal,
+  closeAuthModal,
+  openGateModal,
+  closeGateModal,
+  openEditProfileModal,
+  closeEditProfileModal,
+  toggleIdentityPopover,
+  initIdentityPopover,
+} from "./modals.js";
+import { applyFormat, insertMediaIntoEditor, removeEmbeddedMedia } from "./editor.js";
+import {
+  setPublishMode,
+  resetPublishForm,
+  handleAttachmentUpload,
+  replaceFile,
+  deleteSelectedFile,
+  executePublishToCloud,
+  editEntry,
+  deleteEntry,
+} from "./publish.js";
+import { renderLibraryFeed, fetchDatabaseEntries } from "./entries.js";
+import { openSingleView, processFileAccess } from "./singleView.js";
+import { submitCommentNode } from "./comments.js";
+import {
+  setContactMode,
+  toggleAuthMode,
+  executeLoginWorkflow,
+  executeRegistrationWorkflow,
+  verifyRegistrationOTP,
+  executeLogoutWorkflow,
+  initAuthStateListener,
+} from "./auth.js";
+import { openEditProfileForm, saveProfileEdits } from "./profile.js";
+import { fetchAnalyticsMetrics } from "./admin.js";
 
-let currentEntriesCache = [];
+// ----------------------------------------------------------------------------
+// Delegated click handler — a single listener handles every [data-action]
+// element on the page, including ones created later via innerHTML.
+// ----------------------------------------------------------------------------
+const ACTIONS = {
+  "toggle-sidebar": () => toggleSidebar(),
+  "switch-tab": (el) => switchDashboardTab(el.dataset.tab),
+  "toggle-identity-popover": (el, event) => toggleIdentityPopover(event),
+  "open-auth-modal": () => openAuthModal(),
+  "close-auth-modal": () => closeAuthModal(),
+  "open-publish-modal": () => {
+    resetPublishForm();
+    openPublishModal();
+  },
+  "close-publish-modal": () => closePublishModal(),
+  "close-gate-modal": () => closeGateModal(),
+  "open-gate-login": () => {
+    closeGateModal();
+    toggleAuthMode("login");
+    openAuthModal();
+  },
+  "open-gate-signup": () => {
+    closeGateModal();
+    toggleAuthMode("signup");
+    openAuthModal();
+  },
+  "set-theme": (el) => setTheme(el.dataset.theme),
+  "set-publish-mode": (el) => setPublishMode(el.dataset.mode),
+  "set-contact-mode": (el) => setContactMode(el.dataset.mode),
+  "toggle-auth-mode": (el) => toggleAuthMode(el.dataset.mode),
+  login: () => executeLoginWorkflow(),
+  register: () => executeRegistrationWorkflow(),
+  "verify-otp": () => verifyRegistrationOTP(),
+  logout: () => executeLogoutWorkflow(),
+  "apply-format": (el) => applyFormat(el.dataset.command, el.dataset.value || null),
+  "trigger-file-input": (el) => document.getElementById(el.dataset.target)?.click(),
+  "replace-file": () => replaceFile(),
+  "delete-file": () => deleteSelectedFile(),
+  "publish-entry": () => executePublishToCloud(),
+  "edit-entry": (el) => editEntry(el.dataset.id),
+  "delete-entry": (el) => deleteEntry(el.dataset.id, el.dataset.title),
+  "open-single": (el) => openSingleView(el.dataset.id),
+  "back-to-hub": () => switchDashboardTab("home"),
+  "process-file-access": (el) => processFileAccess(el.dataset.id),
+  "submit-comment": (el) => submitCommentNode(el.dataset.id),
+  "remove-embedded-media": (el) => removeEmbeddedMedia(el),
+  "open-edit-profile-modal": () => openEditProfileForm(),
+  "close-edit-profile-modal": () => closeEditProfileModal(),
+  "save-profile": () => saveProfileEdits(),
+};
 
-export function setEntriesCache(entries) {
-  currentEntriesCache = entries;
+function initDelegatedActions() {
+  document.body.addEventListener("click", (event) => {
+    const el = event.target.closest("[data-action]");
+    if (!el) return;
+    const handler = ACTIONS[el.dataset.action];
+    if (handler) handler(el, event);
+  });
 }
 
-export function openSingleView(entryId) {
-  const entry = currentEntriesCache.find(e => String(e.id) === String(entryId)) || window.allEntriesCache?.find(e => String(e.id) === String(entryId));
-  
-  if (!entry) {
-    showToast("Could not load the requested entry.", "error");
-    return;
-  }
-
-  // Hide all dashboard and list views
-  const views = ['view-home', 'view-library', 'view-articles', 'view-pdfs', 'view-profile', 'view-admin'];
-  views.forEach(viewId => {
-    const el = document.getElementById(viewId);
-    if (el) el.classList.add('hidden');
+// ----------------------------------------------------------------------------
+// Static form control wiring (elements that always exist in the DOM)
+// ----------------------------------------------------------------------------
+function initFormControls() {
+  document.getElementById("pub-category")?.addEventListener("change", (e) => {
+    document.getElementById("pub-category-other").classList.toggle("hidden", e.target.value !== "Other");
   });
 
-  // Reveal the single view section
-  const singleView = document.getElementById('view-single');
-  if (singleView) singleView.classList.remove('hidden');
+  document.getElementById("library-category-filter")?.addEventListener("change", () => renderLibraryFeed());
 
-  // Inject content into the single view hook
-  const contentHook = document.getElementById('single-content-hook');
-  if (contentHook) {
-    contentHook.innerHTML = `
-      <div class="single-article-header">
-        <h2>${entry.title || 'Untitled Entry'}</h2>
-        <div class="entry-meta-bar" style="color: var(--text-muted); margin: 10px 0 20px 0; font-size: 0.9rem;">
-          <span>Category: <strong>${entry.category || 'General'}</strong></span> &bull; 
-          <span>Type: <strong>${entry.type === 'file' ? 'Ebook / PDF' : 'Article'}</strong></span>
-        </div>
-      </div>
-      <div class="single-article-body">
-        ${entry.content || entry.notes || entry.description || 'No textual content provided.'}
-      </div>
-    `;
-  }
+  document.getElementById("pub-image-input")?.addEventListener("change", (e) => insertMediaIntoEditor(e.target, "image"));
+  document.getElementById("pub-video-input")?.addEventListener("change", (e) => insertMediaIntoEditor(e.target, "video"));
+  document.getElementById("pub-file-input")?.addEventListener("change", (e) => handleAttachmentUpload(e.target));
 
-  // Handle Action Bar (Download & Discussions) for PDFs, Ebooks, and Articles
-  const actionBar = document.getElementById('single-action-bar');
-  if (actionBar) {
-    actionBar.classList.remove('hidden');
+  document.getElementById("editor-font-size")?.addEventListener("change", (e) => {
+    if (e.target.value) applyFormat("fontSize", e.target.value);
+  });
 
-    const downloadBtn = document.getElementById('btn-download');
-    const discussBtn = document.getElementById('btn-discuss');
-
-    if (downloadBtn) {
-      if (entry.filePath || entry.fileUrl) {
-        downloadBtn.style.display = 'inline-block';
-        downloadBtn.onclick = () => {
-          const fileLink = entry.filePath || entry.fileUrl;
-          const link = document.createElement('a');
-          link.href = fileLink;
-          link.download = entry.fileName || 'document.pdf';
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-          showToast("Downloading file...", "success");
-        };
-      } else {
-        downloadBtn.style.display = 'none';
-      }
+  // Enter key submits a comment from its input field.
+  document.getElementById("view-single")?.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" && e.target.matches('input[id^="comm-input-"]')) {
+      const id = e.target.id.replace("comm-input-", "");
+      submitCommentNode(id);
     }
-
-    if (discussBtn) {
-      discussBtn.onclick = () => {
-        showToast("Opening discussion thread...", "success");
-        const commentSection = document.getElementById(`comments-section-${entryId}`) || document.getElementById('discussion-section-hook');
-        if (commentSection) {
-          commentSection.scrollIntoView({ behavior: 'smooth' });
-        }
-      };
-    }
-  }
-
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
 }
 
-export function processFileAccess(entryId) {
-  openSingleView(entryId);
-}
+// ----------------------------------------------------------------------------
+// Bootstrap
+// ----------------------------------------------------------------------------
+document.addEventListener("DOMContentLoaded", () => {
+  initTheme();
+  initSidebar();
+  initIdentityPopover();
+  initDelegatedActions();
+  initFormControls();
+  initAuthStateListener();
+
+  fetchDatabaseEntries();
+  fetchAnalyticsMetrics();
+});
