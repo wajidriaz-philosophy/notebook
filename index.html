@@ -181,6 +181,9 @@
       <!-- Content rendered by js/profile.js -->
     </section>
 
+    <!-- Kept outside #view-profile so re-rendering the profile view doesn't destroy it -->
+    <input type="file" id="profile-avatar-input" accept="image/*" class="hidden" aria-hidden="true">
+
     <section id="view-admin" class="hidden">
       <h2 class="section-title"><span aria-hidden="true">👥</span> Registered User Logs</h2>
       <table class="admin-table">

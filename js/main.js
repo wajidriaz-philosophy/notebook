@@ -31,7 +31,7 @@ import {
   deleteEntry,
 } from "./publish.js";
 import { renderLibraryFeed, fetchDatabaseEntries } from "./entries.js";
-import { openSingleView, processFileAccess } from "./singleView.js";
+import { openSingleView, processFileAccess, printCurrentEntry, copyEntryLink, initHashRouting, routeFromHash } from "./singleView.js";
 import { submitCommentNode } from "./comments.js";
 import {
   setContactMode,
@@ -42,7 +42,7 @@ import {
   executeLogoutWorkflow,
   initAuthStateListener,
 } from "./auth.js";
-import { openEditProfileForm, saveProfileEdits } from "./profile.js";
+import { openEditProfileForm, saveProfileEdits, uploadProfileAvatar, removeProfileAvatar } from "./profile.js";
 import { fetchAnalyticsMetrics } from "./admin.js";
 
 // ----------------------------------------------------------------------------
@@ -89,11 +89,14 @@ const ACTIONS = {
   "open-single": (el) => openSingleView(el.dataset.id),
   "back-to-hub": () => switchDashboardTab("home"),
   "process-file-access": (el) => processFileAccess(el.dataset.id),
+  "print-entry": () => printCurrentEntry(),
+  "copy-entry-link": (el) => copyEntryLink(el.dataset.id),
   "submit-comment": (el) => submitCommentNode(el.dataset.id),
   "remove-embedded-media": (el) => removeEmbeddedMedia(el),
   "open-edit-profile-modal": () => openEditProfileForm(),
   "close-edit-profile-modal": () => closeEditProfileModal(),
   "save-profile": () => saveProfileEdits(),
+  "remove-profile-avatar": () => removeProfileAvatar(),
 };
 
 function initDelegatedActions() {
@@ -118,6 +121,7 @@ function initFormControls() {
   document.getElementById("pub-image-input")?.addEventListener("change", (e) => insertMediaIntoEditor(e.target, "image"));
   document.getElementById("pub-video-input")?.addEventListener("change", (e) => insertMediaIntoEditor(e.target, "video"));
   document.getElementById("pub-file-input")?.addEventListener("change", (e) => handleAttachmentUpload(e.target));
+  document.getElementById("profile-avatar-input")?.addEventListener("change", (e) => uploadProfileAvatar(e.target));
 
   document.getElementById("editor-font-size")?.addEventListener("change", (e) => {
     if (e.target.value) applyFormat("fontSize", e.target.value);
@@ -135,14 +139,16 @@ function initFormControls() {
 // ----------------------------------------------------------------------------
 // Bootstrap
 // ----------------------------------------------------------------------------
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   initTheme();
   initSidebar();
   initIdentityPopover();
   initDelegatedActions();
   initFormControls();
+  initHashRouting();
   initAuthStateListener();
 
-  fetchDatabaseEntries();
+  await fetchDatabaseEntries();
   fetchAnalyticsMetrics();
+  routeFromHash();
 });

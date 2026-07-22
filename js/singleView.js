@@ -8,8 +8,21 @@ import { state } from "./state.js";
 import { fetchCommentsForCard } from "./comments.js";
 import { fetchAnalyticsMetrics } from "./admin.js";
 import { openGateModal } from "./modals.js";
+import { showToast } from "./toast.js";
+
+const VIEW_IDS = ["view-home", "view-library", "view-articles", "view-pdfs", "view-admin", "view-profile", "view-single"];
+
+function showOnlyView(idToShow) {
+  VIEW_IDS.forEach((id) => document.getElementById(id)?.classList.toggle("hidden", id !== idToShow));
+}
 
 export async function openSingleView(id) {
+  const entry = state.allEntriesCache.find((e) => e.id === id);
+  if (!entry) {
+    showToast("That entry couldn't be found — it may have been removed.", "error");
+    return;
+  }
+
   if (!state.currentUserIsAdmin) {
     try {
       await updateDoc(doc(db, "notebook_entries", id), { views: increment(1) });
@@ -22,11 +35,15 @@ export async function openSingleView(id) {
     }
   }
 
-  const entry = state.allEntriesCache.find((e) => e.id === id);
-  if (!entry) return;
+  showOnlyView("view-single");
 
-  document.querySelectorAll('main > div[id^="view-"]').forEach((v) => v.classList.add("hidden"));
-  document.getElementById("view-single").classList.remove("hidden");
+  // Give the article its own addressable, shareable, back/forward-able URL
+  // instead of just toggling in-page state — this is what makes it feel
+  // like a real separate page rather than an in-place swap.
+  const targetHash = `#entry-${id}`;
+  if (window.location.hash !== targetHash) {
+    window.location.hash = targetHash;
+  }
 
   const target = document.getElementById("single-content-hook");
   const data = entry.data;
@@ -52,6 +69,13 @@ export async function openSingleView(id) {
       <div class="writer-signature">BY WAJID RIAZ</div>
     `;
   }
+
+  const entryActionsRow = `
+    <div class="entry-actions-row">
+      <button type="button" class="icon-action-btn" data-action="print-entry">🖨️ Print</button>
+      <button type="button" class="icon-action-btn" data-action="copy-entry-link" data-id="${id}">🔗 Copy Link</button>
+    </div>
+  `;
 
   const ownerButtons = state.currentUserIsAdmin
     ? `
@@ -88,6 +112,7 @@ export async function openSingleView(id) {
 
   target.innerHTML = `
     ${mainContent}
+    ${entryActionsRow}
     ${ownerButtons}
 
     <div class="comment-box-root" style="margin-top: 40px; border: 1px solid var(--border-color);">
@@ -138,4 +163,50 @@ export async function processFileAccess(id) {
       /* download counting is best-effort */
     }
   }
+}
+
+export function printCurrentEntry() {
+  window.print();
+}
+
+export async function copyEntryLink(id) {
+  const shareUrl = `${window.location.origin}${window.location.pathname}#entry-${id}`;
+  try {
+    await navigator.clipboard.writeText(shareUrl);
+    showToast("Link copied to clipboard.", "success");
+  } catch (e) {
+    showToast("Couldn't copy the link automatically — you can copy it from the address bar.", "warning");
+  }
+}
+
+/**
+ * Clears the #entry-... hash when navigating away from a single view, so
+ * the URL bar stays in sync with whatever the person is actually looking at.
+ */
+export function clearEntryHash() {
+  if (window.location.hash.startsWith("#entry-")) {
+    history.pushState("", document.title, window.location.pathname + window.location.search);
+  }
+}
+
+/**
+ * Opens whatever entry is referenced in the current URL hash (if any). Used
+ * on first load and whenever the hash changes (e.g. back/forward buttons),
+ * so an article/PDF genuinely behaves like its own page: it's linkable,
+ * bookmarkable, and reloadable.
+ */
+export function routeFromHash() {
+  const match = window.location.hash.match(/^#entry-(.+)$/);
+  if (!match) return;
+  const id = match[1];
+  if (state.allEntriesCache.some((e) => e.id === id)) {
+    openSingleView(id);
+  }
+}
+
+export function initHashRouting() {
+  window.addEventListener("hashchange", () => {
+    if (!window.location.hash.startsWith("#entry-")) return;
+    routeFromHash();
+  });
 }

@@ -4,7 +4,7 @@
 // and (for admins) links back to the admin console.
 // ============================================================================
 
-import { auth, db, doc, getDoc, setDoc } from "./firebase.js";
+import { auth, db, doc, getDoc, setDoc, uploadToCloudinary } from "./firebase.js";
 import { state } from "./state.js";
 import { showToast } from "./toast.js";
 import { closeEditProfileModal, openEditProfileModal } from "./modals.js";
@@ -31,34 +31,60 @@ export function renderProfileView() {
 
   const joinedDate = profile.joined ? new Date(profile.joined).toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" }) : "N/A";
   const contactLabel = profile.contactMode === "phone" ? "Phone Number" : "Email Address";
-  const publishedCount = state.currentUserIsAdmin
-    ? state.allEntriesCache.length
-    : 0;
   const roleLabel = state.currentUserIsAdmin ? "Admin" : "Verified Viewer";
+
+  const avatarHTML = profile.avatarUrl
+    ? `<img class="avatar avatar-lg avatar-img" src="${profile.avatarUrl}" alt="${escapeHTML(profile.fullName || "Profile")}'s profile picture">`
+    : `<div class="avatar avatar-lg" aria-hidden="true">${initialsFromName(profile.fullName)}</div>`;
+
+  const statCards = state.currentUserIsAdmin
+    ? `
+    <div class="profile-stat-card">
+      <h3>${state.allEntriesCache.length}</h3>
+      <p>Published Entries</p>
+    </div>
+    <div class="profile-stat-card">
+      <h3>${joinedDate}</h3>
+      <p>Member Since</p>
+    </div>
+    <div class="profile-stat-card">
+      <h3>${roleLabel}</h3>
+      <p>Account Role</p>
+    </div>`
+    : `
+    <div class="profile-stat-card">
+      <h3>${joinedDate}</h3>
+      <p>Member Since</p>
+    </div>
+    <div class="profile-stat-card">
+      <h3>${roleLabel}</h3>
+      <p>Account Role</p>
+    </div>`;
 
   root.innerHTML = `
     <div class="profile-page-header">
-      <div class="avatar avatar-lg" aria-hidden="true">${initialsFromName(profile.fullName)}</div>
+      <div class="profile-avatar-wrapper">
+        ${avatarHTML}
+      </div>
       <div class="profile-name-block">
         <h2>${escapeHTML(profile.fullName || "Unnamed User")}</h2>
         <div class="username">@${escapeHTML(profile.username || "user")}</div>
         <span class="profile-role-pill">${roleLabel}</span>
+        <div class="profile-photo-actions">
+          <button type="button" class="icon-action-btn" data-action="trigger-file-input" data-target="profile-avatar-input">📷 ${
+            profile.avatarUrl ? "Change Photo" : "Add Photo"
+          }</button>
+          ${
+            profile.avatarUrl
+              ? `<button type="button" class="icon-action-btn danger" data-action="remove-profile-avatar">🗑️ Remove Photo</button>`
+              : ""
+          }
+        </div>
       </div>
     </div>
 
     <div class="profile-grid">
-      <div class="profile-stat-card">
-        <h3>${publishedCount}</h3>
-        <p>Published Entries</p>
-      </div>
-      <div class="profile-stat-card">
-        <h3>${joinedDate}</h3>
-        <p>Member Since</p>
-      </div>
-      <div class="profile-stat-card">
-        <h3>${roleLabel}</h3>
-        <p>Account Role</p>
-      </div>
+      ${statCards}
     </div>
 
     <div class="profile-section">
@@ -117,6 +143,54 @@ export async function saveProfileEdits() {
     showToast("Profile updated successfully.", "success");
   } catch (e) {
     showToast(`Couldn't update your profile: ${e.message}`, "error");
+  }
+}
+
+export async function uploadProfileAvatar(inputEl) {
+  const file = inputEl.files[0];
+  if (!file) return;
+
+  const user = auth.currentUser;
+  if (!user) {
+    showToast("You need to be signed in to set a profile picture.", "warning");
+    return;
+  }
+  if (!file.type.startsWith("image/")) {
+    showToast("Profile pictures must be an image file.", "warning");
+    inputEl.value = "";
+    return;
+  }
+  if (file.size > 5 * 1024 * 1024) {
+    showToast("Please choose an image smaller than 5MB.", "warning");
+    inputEl.value = "";
+    return;
+  }
+
+  showToast("Uploading your profile picture...", "warning", 2500);
+
+  try {
+    const { url } = await uploadToCloudinary(file, "image");
+    await setDoc(doc(db, "users", user.uid), { avatarUrl: url }, { merge: true });
+    state.currentUserProfile = { ...state.currentUserProfile, avatarUrl: url };
+    renderProfileView();
+    showToast("Profile picture updated.", "success");
+  } catch (e) {
+    showToast(`Couldn't upload your profile picture: ${e.message}`, "error");
+  }
+  inputEl.value = "";
+}
+
+export async function removeProfileAvatar() {
+  const user = auth.currentUser;
+  if (!user) return;
+
+  try {
+    await setDoc(doc(db, "users", user.uid), { avatarUrl: "" }, { merge: true });
+    state.currentUserProfile = { ...state.currentUserProfile, avatarUrl: "" };
+    renderProfileView();
+    showToast("Profile picture removed.", "success");
+  } catch (e) {
+    showToast(`Couldn't remove your profile picture: ${e.message}`, "error");
   }
 }
 

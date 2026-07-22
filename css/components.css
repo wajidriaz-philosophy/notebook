@@ -305,6 +305,11 @@
   padding-top: 15px;
   border-top: 1px solid var(--border-color);
 }
+.entry-actions-row {
+  display: flex;
+  gap: var(--space-sm);
+  margin-top: var(--space-lg);
+}
 .icon-action-btn {
   border: 1px solid var(--border-color);
   background: var(--bg-main);

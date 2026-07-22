@@ -13,6 +13,22 @@
   margin-bottom: var(--space-xl);
 }
 
+.profile-avatar-wrapper {
+  flex-shrink: 0;
+}
+
+.avatar-img {
+  object-fit: cover;
+  border: 2px solid var(--border-color);
+}
+
+.profile-photo-actions {
+  display: flex;
+  gap: var(--space-sm);
+  margin-top: var(--space-sm);
+  flex-wrap: wrap;
+}
+
 .profile-page-header .profile-name-block h2 {
   font-family: var(--font-serif);
   font-size: 1.5rem;

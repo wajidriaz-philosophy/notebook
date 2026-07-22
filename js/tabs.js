@@ -4,6 +4,7 @@
 // ============================================================================
 
 import { closeSidebar } from "./sidebar.js";
+import { clearEntryHash } from "./singleView.js";
 
 const TAB_NAMES = ["home", "library", "articles", "pdfs", "admin", "profile", "single"];
 
@@ -15,6 +16,8 @@ export function switchDashboardTab(targetTab) {
 
   document.getElementById(`view-${targetTab}`)?.classList.remove("hidden");
   document.getElementById(`tab-${targetTab}`)?.classList.add("active");
+
+  if (targetTab !== "single") clearEntryHash();
 
   closeSidebar();
   window.scrollTo(0, 0);
