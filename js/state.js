@@ -16,4 +16,6 @@ export const state = {
   allEntriesCache: [],
   pendingUploadedFileMeta: null,
   hasCountedGlobalView: false,
+  activeDMThreadUid: null,
+  dmAsAdmin: false,
 };

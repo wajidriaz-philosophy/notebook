@@ -9,14 +9,9 @@ import { state } from "./state.js";
 import { showToast } from "./toast.js";
 import { closeEditProfileModal, openEditProfileModal } from "./modals.js";
 
-function initialsFromName(name) {
-  if (!name) return "?";
-  return name
-    .trim()
-    .split(/\s+/)
-    .slice(0, 2)
-    .map((n) => n[0]?.toUpperCase() || "")
-    .join("");
+function initialFromUsername(username) {
+  const trimmed = (username || "").trim();
+  return trimmed ? trimmed[0].toUpperCase() : "?";
 }
 
 export function renderProfileView() {
@@ -35,7 +30,7 @@ export function renderProfileView() {
 
   const avatarHTML = profile.avatarUrl
     ? `<img class="avatar avatar-lg avatar-img" src="${profile.avatarUrl}" alt="${escapeHTML(profile.fullName || "Profile")}'s profile picture">`
-    : `<div class="avatar avatar-lg" aria-hidden="true">${initialsFromName(profile.fullName)}</div>`;
+    : `<div class="avatar avatar-lg" aria-hidden="true">${initialFromUsername(profile.username)}</div>`;
 
   const statCards = state.currentUserIsAdmin
     ? `

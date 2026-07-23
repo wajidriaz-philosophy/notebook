@@ -18,6 +18,8 @@ export const openGateModal = () => open("modal-gate");
 export const closeGateModal = () => close("modal-gate");
 export const openEditProfileModal = () => open("modal-edit-profile");
 export const closeEditProfileModal = () => close("modal-edit-profile");
+export const showDMModal = () => open("modal-dm");
+export const closeDMModal = () => close("modal-dm");
 
 export function toggleIdentityPopover(event) {
   event.stopPropagation();

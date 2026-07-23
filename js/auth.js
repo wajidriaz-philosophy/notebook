@@ -18,10 +18,11 @@ import {
 } from "./firebase.js";
 import { state } from "./state.js";
 import { showToast } from "./toast.js";
-import { closeAuthModal } from "./modals.js";
+import { closeAuthModal, closePublishModal, closeGateModal, closeEditProfileModal } from "./modals.js";
 import { switchDashboardTab } from "./tabs.js";
 import { renderAdminUserLedger, fetchAnalyticsMetrics } from "./admin.js";
 import { loadUserProfile, renderProfileView } from "./profile.js";
+import { renderAdminDMThreadList, closeDMModal } from "./dm.js";
 
 const ADMIN_EMAIL = "wajidriazadmin@hub.com";
 
@@ -153,6 +154,11 @@ export async function verifyRegistrationOTP() {
 
 export async function executeLogoutWorkflow() {
   await signOut(auth);
+  closeAuthModal();
+  closePublishModal();
+  closeGateModal();
+  closeEditProfileModal();
+  closeDMModal();
   showToast("You've been signed out.", "success");
 }
 
@@ -174,6 +180,7 @@ export function initAuthStateListener() {
     if (user) {
       state.userEmailSignature = user.email;
       authTrigger.innerText = "Sign Out Session";
+      authTrigger.dataset.action = "logout";
       tabProfile?.classList.remove("hidden");
       loadUserProfile(user.uid);
 
@@ -184,6 +191,7 @@ export function initAuthStateListener() {
         document.getElementById("publish-trigger-btn").classList.remove("hidden");
         document.getElementById("admin-only-stats-wrapper").classList.remove("hidden");
         renderAdminUserLedger();
+        renderAdminDMThreadList();
       } else {
         state.currentUserIsAdmin = false;
         document.getElementById("profile-role-str").innerText = "VERIFIED VIEWER";
@@ -197,6 +205,7 @@ export function initAuthStateListener() {
       state.currentUserProfile = null;
       document.getElementById("profile-role-str").innerText = "Physicist & Philosopher";
       authTrigger.innerText = "Sign In / Create Account";
+      authTrigger.dataset.action = "open-auth-modal";
       document.getElementById("tab-admin").classList.add("hidden");
       document.getElementById("publish-trigger-btn").classList.add("hidden");
       document.getElementById("admin-only-stats-wrapper").classList.add("hidden");

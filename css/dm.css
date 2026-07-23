@@ -1,0 +1,105 @@
+/* ==========================================================================
+   Direct Messages (new feature)
+   ========================================================================== */
+
+.dm-trigger-btn {
+  width: 100%;
+  justify-content: center;
+  margin-top: 4px;
+}
+
+.dm-message-stream {
+  max-height: 340px;
+  min-height: 120px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  background: var(--bg-main);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: var(--space-lg);
+}
+
+.dm-bubble {
+  max-width: 80%;
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+.dm-bubble--user {
+  align-self: flex-start;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+}
+
+.dm-bubble--admin {
+  align-self: flex-end;
+  background: var(--accent-primary);
+  color: var(--btn-text);
+}
+
+.dm-bubble-author {
+  font-weight: 700;
+  font-size: 0.75rem;
+  margin-bottom: 2px;
+  opacity: 0.85;
+}
+
+.dm-bubble-time {
+  font-size: 0.65rem;
+  opacity: 0.7;
+  margin-top: 4px;
+}
+
+/* Admin console thread list */
+.dm-thread-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.dm-thread-row {
+  text-align: left;
+  width: 100%;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: var(--space-md) var(--space-lg);
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+.dm-thread-row:hover,
+.dm-thread-row:focus-visible {
+  background: var(--bg-main);
+}
+
+.dm-thread-row-head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-bottom: 4px;
+}
+
+.dm-unread-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-round);
+  background: var(--error-red);
+  display: inline-block;
+}
+
+.dm-thread-preview {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dm-thread-time {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}

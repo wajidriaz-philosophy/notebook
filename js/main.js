@@ -32,7 +32,8 @@ import {
 } from "./publish.js";
 import { renderLibraryFeed, fetchDatabaseEntries } from "./entries.js";
 import { openSingleView, processFileAccess, printCurrentEntry, copyEntryLink, initHashRouting, routeFromHash } from "./singleView.js";
-import { submitCommentNode } from "./comments.js";
+import { submitCommentNode, toggleReplyForm, submitReply } from "./comments.js";
+import { openDMModal, closeDMModal, sendDMMessage, openAdminDMThread } from "./dm.js";
 import {
   setContactMode,
   toggleAuthMode,
@@ -92,11 +93,17 @@ const ACTIONS = {
   "print-entry": () => printCurrentEntry(),
   "copy-entry-link": (el) => copyEntryLink(el.dataset.id),
   "submit-comment": (el) => submitCommentNode(el.dataset.id),
+  "toggle-reply-form": (el) => toggleReplyForm(el.dataset.id, el.dataset.comment, el.dataset.mention),
+  "submit-reply": (el) => submitReply(el.dataset.id, el.dataset.comment),
   "remove-embedded-media": (el) => removeEmbeddedMedia(el),
   "open-edit-profile-modal": () => openEditProfileForm(),
   "close-edit-profile-modal": () => closeEditProfileModal(),
   "save-profile": () => saveProfileEdits(),
   "remove-profile-avatar": () => removeProfileAvatar(),
+  "open-dm-modal": () => openDMModal(),
+  "close-dm-modal": () => closeDMModal(),
+  "send-dm-message": () => sendDMMessage(),
+  "open-admin-dm-thread": (el) => openAdminDMThread(el.dataset.uid, el.dataset.username),
 };
 
 function initDelegatedActions() {
@@ -127,12 +134,21 @@ function initFormControls() {
     if (e.target.value) applyFormat("fontSize", e.target.value);
   });
 
-  // Enter key submits a comment from its input field.
+  // Enter key submits a comment/reply from its input field.
   document.getElementById("view-single")?.addEventListener("keydown", (e) => {
-    if (e.key === "Enter" && e.target.matches('input[id^="comm-input-"]')) {
+    if (e.key !== "Enter") return;
+    if (e.target.matches('input[id^="comm-input-"]')) {
       const id = e.target.id.replace("comm-input-", "");
       submitCommentNode(id);
+    } else if (e.target.matches('input[id^="reply-input-"]')) {
+      const rootCommentId = e.target.id.replace("reply-input-", "");
+      const entryId = e.target.closest(".comment-box-root")?.querySelector('[id^="stream-hook-"]')?.id.replace("stream-hook-", "");
+      if (entryId) submitReply(entryId, rootCommentId);
     }
+  });
+
+  document.getElementById("dm-message-input")?.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") sendDMMessage();
   });
 }
 
